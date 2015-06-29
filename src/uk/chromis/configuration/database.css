@@ -1,0 +1,21 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+
+
+
+
+
+#fileopen{
+    -fx-graphic: url("/uk/chromis/images/folder.png");
+} 
+
+#dbtest{
+   -fx-graphic: url("/uk/chromis/images/db_status.png"); 
+   -fx-graphic-text-gap : 5;
+}
+
+#chromislogo{
+    -fx-image: url("/uk/chromis/images/chromis_main.png"); 
+}
