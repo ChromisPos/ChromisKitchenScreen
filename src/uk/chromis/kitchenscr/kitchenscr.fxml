@@ -246,7 +246,7 @@
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                <children>
-                  <Button fx:id="completed" defaultButton="true" layoutX="207.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleCompleteOrder" prefHeight="35.0" prefWidth="668.0" textAlignment="CENTER" AnchorPane.bottomAnchor="7.0">
+                  <Button fx:id="completed" defaultButton="true" layoutX="227.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleCompleteOrder" prefHeight="35.0" prefWidth="600.0" textAlignment="CENTER" AnchorPane.bottomAnchor="7.0">
                      <font>
                         <Font name="Tahoma Bold" size="18.0" />
                      </font></Button>

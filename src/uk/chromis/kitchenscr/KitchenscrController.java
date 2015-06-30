@@ -26,13 +26,13 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -40,7 +40,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
+import uk.chromis.dto.Orders;
 import uk.chromis.utils.DataLogicKitchen;
 
 /**
@@ -88,6 +88,8 @@ public class KitchenscrController implements Initializable {
     private String hms;
     public static String selectedOrder;
     private DataLogicKitchen dl_kitchen;
+    private List<String> distinct;
+    private List<Orders> orders;
 
     public static HashMap<Integer, Object> idLabels = new HashMap<>();
     public static HashMap<Integer, String> ticketIds = new HashMap<>();
@@ -131,6 +133,9 @@ public class KitchenscrController implements Initializable {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
+
+                    resetItemDisplays();
+                    buildOrderPanels();
                     updateDisplays();
                 }
             });
@@ -177,8 +182,10 @@ public class KitchenscrController implements Initializable {
             selectedOrder = orderIds.get(7);
             updateButtonText(ticketIds.get(7));
         });
+        resetValues();
         createMaps();
         resetDisplayLabels();
+        buildOrderPanels();
         updateDisplays();
 
     }
@@ -207,6 +214,9 @@ public class KitchenscrController implements Initializable {
             selectedOrder = null;
             updateButtonText("");
         }
+        resetItemDisplays();
+        buildOrderPanels();
+        updateDisplays();
     }
 
     private void updateClock() {
@@ -293,7 +303,6 @@ public class KitchenscrController implements Initializable {
         } else {
             completed.setText("Order :  '" + id + "'  Complete.");
         }
-
     }
 
     private void updateLabels() {
@@ -303,4 +312,66 @@ public class KitchenscrController implements Initializable {
         }
     }
 
+    private void buildOrderPanels() {
+        // Get list of unique orders
+        distinct = dl_kitchen.readDistinctOrders();
+
+        // Populate the panel up to 8 orders
+        for (int j = 0; (j < 8 && j < distinct.size()); j++) {
+
+            orders = dl_kitchen.selectByOrderId(distinct.get(j));
+
+            for (Orders order : orders) {
+                KitchenscrController.ticketIds.put(j, order.getTicketid());
+                ((Label) KitchenscrController.idLabels.get(j)).setText(order.getTicketid());
+                KitchenscrController.startTimes.put(j, order.getOrdertime().getTime());
+                KitchenscrController.orderIds.put(j, order.getOrderid());
+                KitchenscrController.orderLists.get(j).add((order.getQty() > 1 ? order.getQty() + " x " : "") + order.getDetails());
+                if (!"".equals(order.getAttributes())) {
+                    KitchenscrController.orderLists.get(j).add(" ~~ " + order.getAttributes());
+                }
+                if (order.getNotes() != null) {
+                    KitchenscrController.orderLists.get(j).add(" ~~ " + order.getNotes());
+                }
+            }
+        }
+
+        if (distinct.size() < 8) {
+            for (int j = distinct.size(); j < 8; j++) {
+                ((Label) KitchenscrController.idLabels.get(j)).setText("");
+                ((Label) KitchenscrController.timeLabels.get(j)).setText("");
+                KitchenscrController.startTimes.put(j, (long) 0);
+                KitchenscrController.orderLists.get(j).clear();
+            }
+        }
+
+        if (distinct.size() > 7) {
+            for (int j = 8; j < distinct.size(); j++) {
+                orders = dl_kitchen.selectByOrderId(distinct.get(j));
+                KitchenscrController.ordersWaiting.add(orders.get(0).getTicketid());
+            }
+        }
+
+    }
+
+    // clear the list of order items being shown
+    private void resetItemDisplays() {
+        KitchenscrController.order0list.clear();
+        KitchenscrController.order1list.clear();
+        KitchenscrController.order2list.clear();
+        KitchenscrController.order3list.clear();
+        KitchenscrController.order4list.clear();
+        KitchenscrController.order5list.clear();
+        KitchenscrController.order6list.clear();
+        KitchenscrController.order7list.clear();
+        KitchenscrController.ordersWaiting.clear();
+
+    }
+
+    private void resetValues() {
+        for (int j = 0; j < 8; j++) {
+            KitchenscrController.ticketIds.put(j, "");
+            KitchenscrController.startTimes.put(j, (long) 0);
+        }
+    }
 }

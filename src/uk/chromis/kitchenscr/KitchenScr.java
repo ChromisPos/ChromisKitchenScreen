@@ -42,7 +42,6 @@ public class KitchenScr extends Application {
     private final DataLogicKitchen dl_kitchen = new DataLogicKitchen();
     private List<String> distinct;
     private List<Orders> orders;
-    // private Orders currentOrder = new Orders();
     private final KitchenscrController display = new KitchenscrController();
 
     /**
@@ -57,16 +56,18 @@ public class KitchenScr extends Application {
 
         Parent root = FXMLLoader.load(getClass().getResource("kitchenscr.fxml"));
         primaryStage.setTitle("Kitchen Orders");
+        primaryStage.setX(0);
+         primaryStage.setY(0);
         primaryStage.setScene(new Scene(root, 1024, 768));
         primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.show();
 
-        resetValues();
-        resetItemDisplays();
-        buildOrderPanels();
+   //    resetValues();
+//        resetItemDisplays();
+//        buildOrderPanels();
 
         // create the timer task to read the database        
-        new javax.swing.Timer(5000, new readOrders()).start();
+       // new javax.swing.Timer(5000, new readOrders()).start();
 
     }
 
