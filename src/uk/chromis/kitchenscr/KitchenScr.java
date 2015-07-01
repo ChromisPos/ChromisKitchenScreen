@@ -39,10 +39,6 @@ import uk.chromis.utils.DataLogicKitchen;
  */
 public class KitchenScr extends Application {
 
-    private final DataLogicKitchen dl_kitchen = new DataLogicKitchen();
-    private List<String> distinct;
-    private List<Orders> orders;
-    private final KitchenscrController display = new KitchenscrController();
 
     /**
      * @param args the command line arguments
@@ -62,93 +58,5 @@ public class KitchenScr extends Application {
         primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.show();
 
-   //    resetValues();
-//        resetItemDisplays();
-//        buildOrderPanels();
-
-        // create the timer task to read the database        
-       // new javax.swing.Timer(5000, new readOrders()).start();
-
     }
-
-    private class readOrders implements ActionListener {
-        // Update display fields 
-
-        @Override
-        public void actionPerformed(java.awt.event.ActionEvent evt) {
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    resetItemDisplays();
-                    buildOrderPanels();
-                }
-            }
-            );
-        }
-
-    }
-
-    private void buildOrderPanels() {
-        // Get list of unique orders
-        distinct = dl_kitchen.readDistinctOrders();
-
-        // Populate the panel up to 8 orders
-        for (int j = 0; (j < 8 && j < distinct.size()); j++) {
-
-            orders = dl_kitchen.selectByOrderId(distinct.get(j));
-
-            for (Orders order : orders) {
-                KitchenscrController.ticketIds.put(j, order.getTicketid());
-                ((Label) KitchenscrController.idLabels.get(j)).setText(order.getTicketid());
-                KitchenscrController.startTimes.put(j, order.getOrdertime().getTime());
-                KitchenscrController.orderIds.put(j, order.getOrderid());
-                KitchenscrController.orderLists.get(j).add((order.getQty() > 1 ? order.getQty() + " x " : "") + order.getDetails());
-                if (!"".equals(order.getAttributes())) {
-                    KitchenscrController.orderLists.get(j).add(" ~~ " + order.getAttributes());
-                }
-                if (order.getNotes() != null) {
-                    KitchenscrController.orderLists.get(j).add(" ~~ " + order.getNotes());
-                }
-            }
-        }
-
-        if (distinct.size() < 8) {
-            for (int j = distinct.size(); j < 8; j++) {
-                ((Label) KitchenscrController.idLabels.get(j)).setText("");
-                ((Label) KitchenscrController.timeLabels.get(j)).setText("");
-                KitchenscrController.startTimes.put(j, (long) 0);
-                KitchenscrController.orderLists.get(j).clear();
-            }
-        }
-
-        if (distinct.size() > 7) {
-            for (int j = 8; j < distinct.size(); j++) {
-                orders = dl_kitchen.selectByOrderId(distinct.get(j));
-                KitchenscrController.ordersWaiting.add(orders.get(0).getTicketid());
-            }
-        }
-
-    }
-
-    // clear the list of order items being shown
-    private void resetItemDisplays() {
-        KitchenscrController.order0list.clear();
-        KitchenscrController.order1list.clear();
-        KitchenscrController.order2list.clear();
-        KitchenscrController.order3list.clear();
-        KitchenscrController.order4list.clear();
-        KitchenscrController.order5list.clear();
-        KitchenscrController.order6list.clear();
-        KitchenscrController.order7list.clear();
-        KitchenscrController.ordersWaiting.clear();
-
-    }
-
-    private void resetValues() {
-        for (int j = 0; j < 8; j++) {
-            KitchenscrController.ticketIds.put(j, "");
-            KitchenscrController.startTimes.put(j, (long) 0);
-        }
-    }
-
 }

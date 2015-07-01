@@ -120,7 +120,7 @@ public class KitchenscrController implements Initializable {
                 public void run() {
                     updateClock();
                     updateTimers();
-                    //updateButtonText();
+
                 }
             });
         }
@@ -134,9 +134,7 @@ public class KitchenscrController implements Initializable {
                 @Override
                 public void run() {
 
-                    resetItemDisplays();
                     buildOrderPanels();
-                    updateDisplays();
                 }
             });
         }
@@ -148,7 +146,7 @@ public class KitchenscrController implements Initializable {
         dl_kitchen = new DataLogicKitchen();
 
         new javax.swing.Timer(1000, new PrintTimeAction()).start();
-        new javax.swing.Timer(6000, new updateDisplay()).start();
+        new javax.swing.Timer(5000, new updateDisplay()).start();
 
         order0items.setOnMouseClicked((MouseEvent event) -> {
             selectedOrder = orderIds.get(0);
@@ -182,12 +180,8 @@ public class KitchenscrController implements Initializable {
             selectedOrder = orderIds.get(7);
             updateButtonText(ticketIds.get(7));
         });
-        resetValues();
         createMaps();
-        resetDisplayLabels();
         buildOrderPanels();
-        updateDisplays();
-
     }
 
     public void handleExitClick() {
@@ -214,9 +208,7 @@ public class KitchenscrController implements Initializable {
             selectedOrder = null;
             updateButtonText("");
         }
-        resetItemDisplays();
         buildOrderPanels();
-        updateDisplays();
     }
 
     private void updateClock() {
@@ -259,33 +251,6 @@ public class KitchenscrController implements Initializable {
         orderLists.put(7, order7list);
     }
 
-    private void resetDisplayLabels() {
-        idLabels.entrySet().stream().map((entry) -> {
-            tmpLabel = (Label) entry.getValue();
-            return entry;
-        }).forEach((_item) -> {
-            tmpLabel.setText("");
-        });
-
-        timeLabels.entrySet().stream().map((entry) -> {
-            tmpLabel = (Label) entry.getValue();
-            return entry;
-        }).forEach((_item) -> {
-            tmpLabel.setText("");
-        });
-    }
-
-    private void updateDisplays() {
-        order0items.setItems(order0list);
-        order1items.setItems(order1list);
-        order2items.setItems(order2list);
-        order3items.setItems(order3list);
-        order4items.setItems(order4list);
-        order5items.setItems(order5list);
-        order6items.setItems(order6list);
-        order7items.setItems(order7list);
-        orderlist.setItems(ordersWaiting);
-    }
 
     private void updateTimers() {
         for (int j = 0; j < 8; j++) {
@@ -312,7 +277,10 @@ public class KitchenscrController implements Initializable {
         }
     }
 
+
     private void buildOrderPanels() {
+        resetItemDisplays();
+
         // Get list of unique orders
         distinct = dl_kitchen.readDistinctOrders();
 
@@ -351,7 +319,7 @@ public class KitchenscrController implements Initializable {
                 KitchenscrController.ordersWaiting.add(orders.get(0).getTicketid());
             }
         }
-
+        updateDisplays();
     }
 
     // clear the list of order items being shown
@@ -368,10 +336,15 @@ public class KitchenscrController implements Initializable {
 
     }
 
-    private void resetValues() {
-        for (int j = 0; j < 8; j++) {
-            KitchenscrController.ticketIds.put(j, "");
-            KitchenscrController.startTimes.put(j, (long) 0);
-        }
+    private void updateDisplays() {
+        order0items.setItems(order0list);
+        order1items.setItems(order1list);
+        order2items.setItems(order2list);
+        order3items.setItems(order3list);
+        order4items.setItems(order4list);
+        order5items.setItems(order5list);
+        order6items.setItems(order6list);
+        order7items.setItems(order7list);
+        orderlist.setItems(ordersWaiting);
     }
 }
