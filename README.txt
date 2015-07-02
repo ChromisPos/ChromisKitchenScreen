@@ -1,7 +1,7 @@
 2nd July 2015
 Release: v1.00
 
-Welcome to the Chromis Kitcen Screen application.
+Welcome to the Chromis Kitchen Screen application.
 
 Chromis Kitchescr is the first of a range of new products under the Chromis banner.
 
