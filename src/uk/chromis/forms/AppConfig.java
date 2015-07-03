@@ -3,6 +3,8 @@
  Copyright (c) 2015 chromis.co.uk (John Lewis)
  http://www.chromis.co.uk
 
+kitchen Screen v1.01
+
  This file is part of chromis & its associated programs
 
  chromis is free software: you can redistribute it and/or modify
@@ -18,6 +20,7 @@
  You should have received a copy of the GNU General Public License
  along with chromis.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 
 package uk.chromis.forms;
 
@@ -35,8 +38,6 @@ import java.util.logging.Logger;
  *
  * @author John
  */
-
-
 public class AppConfig {
 
     private static AppConfig instance = null;
@@ -62,9 +63,9 @@ public class AppConfig {
         return new File(new File(System.getProperty("user.home")), AppLocal.APP_ID + ".properties");
     }
 
-    public String getDirPath(){
+    public String getDirPath() {
         String dirname = System.getProperty("dirname.path");
-        return( dirname == null ? "./" : dirname);
+        return (dirname == null ? "./" : dirname);
     }
 
     public void setProperty(String sKey, String sValue) {
@@ -106,12 +107,13 @@ public class AppConfig {
     }
 
     private void loadDefault() {
-        m_propsconfig.setProperty("db.engine", "MySQL");
-        m_propsconfig.setProperty("db.driverlib", new File(new File(getDirPath()), "lib/mysql-connector-java-5.1.26-bin.jar").getAbsolutePath());
-        m_propsconfig.setProperty("db.driver", "org.postgresql.Driver");
-        m_propsconfig.setProperty("db.URL", "jdbc:postgresql://localhost:5432/unicentaopos");
+        m_propsconfig.setProperty("db.engine", "MySql");
+        //    m_propsconfig.setProperty("db.driverlib", new File(new File(getDirPath()), "lib/mysql-connector-java-5.1.26-bin.jar").getAbsolutePath());
+        m_propsconfig.setProperty("db.driver", "com.mysql.jdbc.Driver");
+        m_propsconfig.setProperty("db.URL", "jdbc:mysql://localhost:3306/unicenta");
         m_propsconfig.setProperty("db.user", "");
         m_propsconfig.setProperty("db.password", "");
+        m_propsconfig.setProperty("screen.displaynumber", "1");
     }
 
 }

@@ -3,6 +3,8 @@
  Copyright (c) 2015 chromis.co.uk (John Lewis)
  http://www.chromis.co.uk
 
+kitchen Screen v1.01
+
  This file is part of chromis & its associated programs
 
  chromis is free software: you can redistribute it and/or modify
@@ -18,6 +20,9 @@
  You should have received a copy of the GNU General Public License
  along with chromis.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+
+
 package uk.chromis.utils;
 
 import java.util.ArrayList;
@@ -27,6 +32,7 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import uk.chromis.dto.Orders;
+import uk.chromis.forms.AppConfig;
 import uk.chromis.hibernate.HibernateUtil;
 
 public class DataLogicKitchen {
@@ -42,7 +48,8 @@ public class DataLogicKitchen {
 
 
     public List<String> readDistinctOrders() {
-        String sql_query = "SELECT DISTINCT ORDERID, ORDERTIME FROM ORDERS ORDER BY ORDERTIME ";
+     //   String sql_query = "SELECT DISTINCT ORDERID, ORDERTIME FROM ORDERS ORDER BY ORDERTIME ";
+        String sql_query = "SELECT DISTINCT ORDERID, ORDERTIME FROM ORDERS WHERE DISPLAYID = " + Integer.parseInt(AppConfig.getInstance().getProperty("screen.displaynumber")) + " ORDER BY ORDERTIME ";
         SQLQuery query = HibernateUtil.getSessionFactory().openSession().createSQLQuery(sql_query);
         query.addScalar("ORDERID");
         List results = query.list();

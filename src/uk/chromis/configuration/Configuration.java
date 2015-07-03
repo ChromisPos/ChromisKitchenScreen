@@ -28,8 +28,8 @@ public class Configuration extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("database.fxml"));
         primaryStage.setTitle("Database Configuration");
         primaryStage.setScene(new Scene(root, 600, 300));
-        // setUserAgentStylesheet(STYLESHEET_MODENA);
-        //primaryStage.initStyle(StageStyle.UNDECORATED);
+        setUserAgentStylesheet(STYLESHEET_MODENA);
+
         primaryStage.show();
 
     }
