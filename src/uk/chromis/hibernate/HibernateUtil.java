@@ -33,21 +33,21 @@ public class HibernateUtil {
         configuration.setProperty("hibernate.dialect", AppConfig.getInstance().getProperty("db.dialect"));
 
         // Set up connection pooling to use c3p0 rather than hibernates built in pooling
+         configuration.setProperty("hibernate.connection.provider_class", "org.hibernate.connection.C3P0ConnectionProvider");
+       // configuration.setProperty("hibernate.connection.provider_class", "org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider");
         configuration.setProperty("hibernate.c3p0.initialPoolSize", "5");
         configuration.setProperty("hibernate.c3p0.min", "5");
-        configuration.setProperty("hibernate.c3p0.max", "15");
+        configuration.setProperty("hibernate.c3p0.max", "10");
         configuration.setProperty("hibernate.c3p0.timeout", "5000");
-        configuration.setProperty("hibernate.c3p0.max_statements", "0");
+        configuration.setProperty("hibernate.c3p0.max_statements", "30");
         configuration.setProperty("hibernate.c3p0.idle_test_period", "300");
         configuration.setProperty("hibernate.c3p0.aquire_increment", "2");
 
         configuration.setProperty("hibernate.hbm2ddl.auto", "update");
         configuration.setProperty("hibernate.show_sql", "false");
-        configuration.setProperty("hibernate.connection.pool_size", "0");
-        configuration.setProperty("hibernate.cache.provider_class", "org.hibernate.cache.internal.NoCacheProvider");
+        configuration.setProperty("hibernate.connection.pool_size", "5");
 
         configuration.addAnnotatedClass(Orders.class);
-       
 
         serviceRegistry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
         sessionFactory = configuration.buildSessionFactory(serviceRegistry);
