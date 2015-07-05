@@ -3,7 +3,7 @@
  Copyright (c) 2015 chromis.co.uk (John Lewis)
  http://www.chromis.co.uk
 
-kitchen Screen v1.01
+ kitchen Screen v1.01
 
  This file is part of chromis & its associated programs
 
@@ -20,8 +20,6 @@ kitchen Screen v1.01
  You should have received a copy of the GNU General Public License
  along with chromis.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-
 package uk.chromis.forms;
 
 import java.io.File;

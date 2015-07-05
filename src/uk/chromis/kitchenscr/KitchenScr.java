@@ -3,7 +3,7 @@
  Copyright (c) 2015 chromis.co.uk (John Lewis)
  http://www.chromis.co.uk
 
-kitchen Screen v1.01
+ kitchen Screen v1.01
 
  This file is part of chromis & its associated programs
 
@@ -20,8 +20,6 @@ kitchen Screen v1.01
  You should have received a copy of the GNU General Public License
  along with chromis.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-
 package uk.chromis.kitchenscr;
 
 import javafx.application.Application;
@@ -30,12 +28,16 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import uk.chromis.forms.AppConfig;
 
 /**
  *
  * @author John Lewis 2015
  */
 public class KitchenScr extends Application {
+
+    private int width = 1024;
+    private int height = 768;
 
     /**
      * @param args the command line arguments
@@ -47,11 +49,24 @@ public class KitchenScr extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
+        try {
+        if (AppConfig.getInstance().getProperty("screen.width") != null) {
+            width = Integer.parseInt(AppConfig.getInstance().getProperty("screen.width"));
+        }
+        if(AppConfig.getInstance().getProperty("screen.height") != null)
+        {
+            height = Integer.parseInt(AppConfig.getInstance().getProperty("screen.height"));
+        }
+        } catch (IllegalArgumentException e){
+            width = 1024;
+            height = 768;
+        }
+
         Parent root = FXMLLoader.load(getClass().getResource("kitchenscr.fxml"));
         primaryStage.setTitle("Kitchen Orders");
         primaryStage.setX(0);
         primaryStage.setY(0);
-        primaryStage.setScene(new Scene(root, 1024, 768));
+        primaryStage.setScene(new Scene(root, width, height));
         primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.show();
 

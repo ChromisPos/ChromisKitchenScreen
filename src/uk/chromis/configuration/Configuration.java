@@ -11,6 +11,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import uk.chromis.forms.AppLocal;
 
 /**
  *
@@ -26,7 +27,7 @@ public class Configuration extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         Parent root = FXMLLoader.load(getClass().getResource("database.fxml"));
-        primaryStage.setTitle("Database Configuration");
+        primaryStage.setTitle("Database Configuration - v" + AppLocal.APP_VERSION);
         primaryStage.setScene(new Scene(root, 600, 300));
         setUserAgentStylesheet(STYLESHEET_MODENA);
 

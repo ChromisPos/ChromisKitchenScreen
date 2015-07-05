@@ -3,7 +3,7 @@
  Copyright (c) 2015 chromis.co.uk (John Lewis)
  http://www.chromis.co.uk
 
-kitchen Screen v1.01
+ kitchen Screen v1.01
 
  This file is part of chromis & its associated programs
 
@@ -20,8 +20,6 @@ kitchen Screen v1.01
  You should have received a copy of the GNU General Public License
  along with chromis.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-
 package uk.chromis.kitchenscr;
 
 import java.awt.event.ActionListener;
@@ -43,8 +41,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SplitPane;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import uk.chromis.dto.Orders;
+import uk.chromis.forms.AppConfig;
 import uk.chromis.utils.DataLogicKitchen;
 
 /**
@@ -86,9 +87,10 @@ public class KitchenscrController implements Initializable {
 
     public ListView orderlist;
 
+
     private Label tmpLabel;
-    private long startTime;
-    private final DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+    // private long startTime;
+    private DateFormat dateFormat;
     private String hms;
     public static String selectedOrder;
     private DataLogicKitchen dl_kitchen;
@@ -184,6 +186,17 @@ public class KitchenscrController implements Initializable {
             selectedOrder = orderIds.get(7);
             updateButtonText(ticketIds.get(7));
         });
+
+        try {
+            if (AppConfig.getInstance().getProperty("clock.time") != null) {
+                dateFormat = new SimpleDateFormat(AppConfig.getInstance().getProperty("clock.time"));
+            } else {
+                dateFormat = new SimpleDateFormat("HH:mm:ss");
+            }
+        } catch (IllegalArgumentException e) {
+            dateFormat = new SimpleDateFormat("HH:mm:ss");
+        }
+
         createMaps();
         buildOrderPanels();
     }
@@ -191,6 +204,8 @@ public class KitchenscrController implements Initializable {
     public void handleExitClick() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Exit Kitchen");
+        alert.setX(100);
+        alert.setY(150);
         alert.setHeaderText("Notice :  \nIf you close the kitchen for day any unprocessed orders will be deleted from the database.");
         alert.setContentText("Do You want to close the Kitchen for the Day?");
         ButtonType buttonSaveExit = new ButtonType("Close Kitchen");
@@ -255,7 +270,6 @@ public class KitchenscrController implements Initializable {
         orderLists.put(7, order7list);
     }
 
-
     private void updateTimers() {
         for (int j = 0; j < 8; j++) {
             if (startTimes.get(j) > 0) {
@@ -280,7 +294,6 @@ public class KitchenscrController implements Initializable {
             tmpLabel.setText(ticketIds.get(j));
         }
     }
-
 
     private void buildOrderPanels() {
         resetItemDisplays();
