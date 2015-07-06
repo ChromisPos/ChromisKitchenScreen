@@ -106,12 +106,13 @@ public class AppConfig {
 
     private void loadDefault() {
         m_propsconfig.setProperty("db.engine", "MySql");
-        //    m_propsconfig.setProperty("db.driverlib", new File(new File(getDirPath()), "lib/mysql-connector-java-5.1.26-bin.jar").getAbsolutePath());
         m_propsconfig.setProperty("db.driver", "com.mysql.jdbc.Driver");
         m_propsconfig.setProperty("db.URL", "jdbc:mysql://localhost:3306/unicenta");
         m_propsconfig.setProperty("db.user", "");
         m_propsconfig.setProperty("db.password", "");
         m_propsconfig.setProperty("screen.displaynumber", "1");
+        m_propsconfig.setProperty("db.dialect", "org.hibernate.dialect.MySQLDialect");
+    
     }
 
 }
