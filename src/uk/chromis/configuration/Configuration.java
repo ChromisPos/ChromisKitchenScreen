@@ -28,7 +28,7 @@ public class Configuration extends Application {
 
         Parent root = FXMLLoader.load(getClass().getResource("database.fxml"));
         primaryStage.setTitle("Database Configuration - v" + AppLocal.APP_VERSION);
-        primaryStage.setScene(new Scene(root, 600, 300));
+        primaryStage.setScene(new Scene(root, 600, 350));
         setUserAgentStylesheet(STYLESHEET_MODENA);
 
         primaryStage.show();

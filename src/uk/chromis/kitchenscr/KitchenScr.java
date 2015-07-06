@@ -64,8 +64,8 @@ public class KitchenScr extends Application {
 
         Parent root = FXMLLoader.load(getClass().getResource("kitchenscr.fxml"));
         primaryStage.setTitle("Kitchen Orders");
-        primaryStage.setX(0);
-        primaryStage.setY(0);
+        primaryStage.setX(50);
+        primaryStage.setY(50);
         primaryStage.setScene(new Scene(root, width, height));
         primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.show();

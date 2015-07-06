@@ -54,7 +54,7 @@ public class HibernateUtil {
         configuration.setProperty("hibernate.connection.username", AppConfig.getInstance().getProperty("db.user"));
         configuration.setProperty("hibernate.connection.password", sDBPassword);
         configuration.setProperty("hibernate.dialect", AppConfig.getInstance().getProperty("db.dialect"));
-
+/*
         // Set up connection pooling to use c3p0 rather than hibernates built in pooling
          configuration.setProperty("hibernate.connection.provider_class", "org.hibernate.connection.C3P0ConnectionProvider");
        // configuration.setProperty("hibernate.connection.provider_class", "org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider");
@@ -65,13 +65,15 @@ public class HibernateUtil {
         configuration.setProperty("hibernate.c3p0.max_statements", "30");
         configuration.setProperty("hibernate.c3p0.idle_test_period", "300");
         configuration.setProperty("hibernate.c3p0.aquire_increment", "2");
-
+*/
         configuration.setProperty("hibernate.hbm2ddl.auto", "update");
         configuration.setProperty("hibernate.show_sql", "false");
         configuration.setProperty("hibernate.connection.pool_size", "5");
 
         configuration.addAnnotatedClass(Orders.class);
 
+        
+        
         serviceRegistry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
         sessionFactory = configuration.buildSessionFactory(serviceRegistry);
 

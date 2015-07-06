@@ -38,12 +38,11 @@ import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.SplitPane;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
 import uk.chromis.dto.Orders;
 import uk.chromis.forms.AppConfig;
 import uk.chromis.utils.DataLogicKitchen;
@@ -209,16 +208,16 @@ public class KitchenscrController implements Initializable {
         alert.setHeaderText("Notice :  \nIf you close the kitchen for day any unprocessed orders will be deleted from the database.");
         alert.setContentText("Do You want to close the Kitchen for the Day?");
         ButtonType buttonSaveExit = new ButtonType("Close Kitchen");
+        ButtonType buttonCancel = new ButtonType("Cancel");
         ButtonType buttonExit = new ButtonType("Exit");
-        alert.getButtonTypes().setAll(buttonSaveExit, buttonExit);
+        alert.getButtonTypes().setAll(buttonExit, buttonSaveExit, buttonCancel);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == buttonSaveExit) {
             dl_kitchen.removeAllOrders();
             System.exit(0);
-        } else {
+        } else if (result.get() == buttonExit) {
             System.exit(0);
         }
-
     }
 
     public void handleCompleteOrder() {

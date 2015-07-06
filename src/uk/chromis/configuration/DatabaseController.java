@@ -51,11 +51,11 @@ public class DatabaseController implements Initializable {
     public TextField jtxtDbURL;
     public TextField jtxtDbUser;
     public TextField jtxtDbPassword;
+    public TextField jtxtDialect;
     public Button save;
     public Spinner displayNumber;
 
     private final DirtyManager dirty = new DirtyManager();
-    private String dialect;
     private String display;
 
     @Override
@@ -75,28 +75,35 @@ public class DatabaseController implements Initializable {
                 jtxtDbURL.setText("jdbc:derby://localhost:1527/unicentaopos");
                 jtxtDbUser.setText("");
                 jtxtDbPassword.setText("");
-                dialect = "org.hibernate.dialect.DerbyDialect";
+                jtxtDialect.setText("org.hibernate.dialect.DerbyDialect");
             } else if ("MySQL".equals(jcboDBDriver.getValue())) {
                 displayNumber.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9, 1));
                 jtxtDbDriver.setText("com.mysql.jdbc.Driver");
                 jtxtDbURL.setText("jdbc:mysql://localhost:3306/unicentaopos");
                 jtxtDbUser.setText("");
                 jtxtDbPassword.setText("");
-                dialect = "org.hibernate.dialect.MySQLDialect";
+                jtxtDialect.setText("org.hibernate.dialect.MySQLDialect");
             } else if ("Oracle 11g Express".equals(jcboDBDriver.getValue())) {
                 displayNumber.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9, 1));
                 jtxtDbDriver.setText("oracle.jdbc.driver.OracleDriver");
                 jtxtDbURL.setText("jdbc:oracle:thin://localhost:1521/unicentaopos");
                 jtxtDbUser.setText("");
                 jtxtDbPassword.setText("");
-                dialect = "org.hibernate.dialect.OracleDialect";
+                jtxtDialect.setText("org.hibernate.dialect.OracleDialect");
             } else if ("PostgreSQL".equals(jcboDBDriver.getValue())) {
                 displayNumber.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9, 1));
                 jtxtDbDriver.setText("org.postgresql.Driver");
                 jtxtDbURL.setText("jdbc:postgresql://localhost:5432/unicentaopos");
                 jtxtDbUser.setText("");
                 jtxtDbPassword.setText("");
-                dialect = "org.hibernate.dialect.PostgreSQLDialect";
+                jtxtDialect.setText("org.hibernate.dialect.PostgreSQLDialect");
+            } else {
+                displayNumber.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9, 1));
+                jtxtDbDriver.setText("");
+                jtxtDbURL.setText("");
+                jtxtDbUser.setText("");
+                jtxtDbPassword.setText("");
+                jtxtDialect.setText("");
             }
         });
 
@@ -107,6 +114,7 @@ public class DatabaseController implements Initializable {
         jcboDBDriver.setValue(AppConfig.getInstance().getProperty("db.engine"));
         jtxtDbDriver.setText(AppConfig.getInstance().getProperty("db.driver"));
         jtxtDbURL.setText(AppConfig.getInstance().getProperty("db.URL"));
+        jtxtDialect.setText(AppConfig.getInstance().getProperty("db.dialect"));
         String sDBUser = AppConfig.getInstance().getProperty("db.user");
         String sDBPassword = AppConfig.getInstance().getProperty("db.password");
         if (sDBUser != null && sDBPassword != null && sDBPassword.startsWith("crypt:")) {
@@ -115,7 +123,6 @@ public class DatabaseController implements Initializable {
         }
         jtxtDbUser.setText(sDBUser);
         jtxtDbPassword.setText(sDBPassword);
-        dialect = AppConfig.getInstance().getProperty("db.dialect");
 
         display = (AppConfig.getInstance().getProperty("screen.displaynumber"));
         if (display == null || "".equals(display)) {
@@ -134,7 +141,7 @@ public class DatabaseController implements Initializable {
         AppConfig.getInstance().setProperty("db.user", jtxtDbUser.getText());
         AltEncrypter cypher = new AltEncrypter("cypherkey" + jtxtDbUser.getText());
         AppConfig.getInstance().setProperty("db.password", "crypt:" + cypher.encrypt(new String(jtxtDbPassword.getText())));
-        AppConfig.getInstance().setProperty("db.dialect", dialect);
+        AppConfig.getInstance().setProperty("db.dialect", jtxtDialect.getText());
 
         AppConfig.getInstance().save();
         dirty.resetDirty();
