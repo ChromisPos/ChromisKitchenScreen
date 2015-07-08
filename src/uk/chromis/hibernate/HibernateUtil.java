@@ -3,7 +3,7 @@
  Copyright (c) 2015 chromis.co.uk (John Lewis)
  http://www.chromis.co.uk
 
-kitchen Screen v1.01
+ kitchen Screen v1.01
 
  This file is part of chromis & its associated programs
 
@@ -20,9 +20,10 @@ kitchen Screen v1.01
  You should have received a copy of the GNU General Public License
  along with chromis.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package uk.chromis.hibernate;
 
+import java.sql.SQLException;
+import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -54,30 +55,34 @@ public class HibernateUtil {
         configuration.setProperty("hibernate.connection.username", AppConfig.getInstance().getProperty("db.user"));
         configuration.setProperty("hibernate.connection.password", sDBPassword);
         configuration.setProperty("hibernate.dialect", AppConfig.getInstance().getProperty("db.dialect"));
-/*
-        // Set up connection pooling to use c3p0 rather than hibernates built in pooling
+        /*
+         // Set up connection pooling to use c3p0 rather than hibernates built in pooling
          configuration.setProperty("hibernate.connection.provider_class", "org.hibernate.connection.C3P0ConnectionProvider");
-       // configuration.setProperty("hibernate.connection.provider_class", "org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider");
-        configuration.setProperty("hibernate.c3p0.initialPoolSize", "5");
-        configuration.setProperty("hibernate.c3p0.min", "5");
-        configuration.setProperty("hibernate.c3p0.max", "10");
-        configuration.setProperty("hibernate.c3p0.timeout", "5000");
-        configuration.setProperty("hibernate.c3p0.max_statements", "30");
-        configuration.setProperty("hibernate.c3p0.idle_test_period", "300");
-        configuration.setProperty("hibernate.c3p0.aquire_increment", "2");
-*/
-        configuration.setProperty("hibernate.hbm2ddl.auto", "update");
+         // configuration.setProperty("hibernate.connection.provider_class", "org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider");
+       
+         configuration.setProperty("hibernate.c3p0.initialPoolSize", "5");
+         configuration.setProperty("hibernate.c3p0.min", "5");
+         configuration.setProperty("hibernate.c3p0.max", "10");
+         configuration.setProperty("hibernate.c3p0.timeout", "5000");
+         configuration.setProperty("hibernate.c3p0.max_statements", "30");
+         configuration.setProperty("hibernate.c3p0.idle_test_period", "300");
+         configuration.setProperty("hibernate.c3p0.aquire_increment", "2");
+         */
+        //configuration.setProperty("hibernate.hbm2ddl.auto", "update");
         configuration.setProperty("hibernate.show_sql", "false");
         configuration.setProperty("hibernate.connection.pool_size", "5");
 
         configuration.addAnnotatedClass(Orders.class);
 
-        
-        
         serviceRegistry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
-        sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+        try {
+            sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+        } catch (Exception ex) {
+            return null;
+        }
 
         return sessionFactory;
+
     }
 
     public static SessionFactory getSessionFactory() {

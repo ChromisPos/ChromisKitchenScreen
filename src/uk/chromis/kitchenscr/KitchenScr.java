@@ -22,13 +22,24 @@
  */
 package uk.chromis.kitchenscr;
 
+import java.sql.SQLException;
+import java.util.Optional;
 import javafx.application.Application;
+import static javafx.application.Application.STYLESHEET_MODENA;
+import static javafx.application.Application.setUserAgentStylesheet;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.hibernate.HibernateException;
+import org.hibernate.JDBCException;
+import org.hibernate.Session;
 import uk.chromis.forms.AppConfig;
+import uk.chromis.forms.AppLocal;
+import uk.chromis.hibernate.HibernateUtil;
 
 /**
  *
@@ -50,14 +61,31 @@ public class KitchenScr extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         try {
-        if (AppConfig.getInstance().getProperty("screen.width") != null) {
-            width = Integer.parseInt(AppConfig.getInstance().getProperty("screen.width"));
-        }
-        if(AppConfig.getInstance().getProperty("screen.height") != null)
-        {
-            height = Integer.parseInt(AppConfig.getInstance().getProperty("screen.height"));
-        }
-        } catch (IllegalArgumentException e){
+            HibernateUtil.getSessionFactory().openSession();
+        } catch (Exception ex) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Database Error");
+            alert.setHeaderText(null);
+            alert.setContentText("Unable to connect to the database.");
+            ButtonType buttonOK = new ButtonType("OK");
+            alert.getButtonTypes().setAll(buttonOK);
+            Optional<ButtonType> result = alert.showAndWait();
+            Stage secondaryStage = new Stage();
+            Parent root = FXMLLoader.load(getClass().getResource("/uk/chromis/configuration/database.fxml"));
+            secondaryStage.setTitle("Database Configuration - v" + AppLocal.APP_VERSION);
+            secondaryStage.setScene(new Scene(root, 600, 350));
+            setUserAgentStylesheet(STYLESHEET_MODENA);
+            secondaryStage.showAndWait();
+        };
+
+        try {
+            if (AppConfig.getInstance().getProperty("screen.width") != null) {
+                width = Integer.parseInt(AppConfig.getInstance().getProperty("screen.width"));
+            }
+            if (AppConfig.getInstance().getProperty("screen.height") != null) {
+                height = Integer.parseInt(AppConfig.getInstance().getProperty("screen.height"));
+            }
+        } catch (IllegalArgumentException e) {
             width = 1024;
             height = 768;
         }

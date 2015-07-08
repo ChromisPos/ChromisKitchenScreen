@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+
+    <changeSet author="chromis - John L" id="Create KitchenScr Table">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="ORDERS"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="ORDERS">            
+            <column name="ID" type="varchar(50)" >
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="ORDERID" type="varchar(50)" />
+            <column name="QTY" type="int" defaultValueNumeric="1"/>  
+            <column name="DETAILS" type="varchar(255)" />
+            <column name="ATTRIBUTES" type="varchar(255)" />
+            <column name="NOTES" type="varchar(255)" />
+            <column name="TICKETID" type="varchar(50)" />
+            <column name="ORDERTIME" type="timestamp" defaultValueDate="CURRENT_TIMESTAMP"/>         
+            <column name="DISPLAYID" type="int" defaultValueNumeric="1"/>                
+        </createTable>
+    </changeSet>
+ 
+</databaseChangeLog>
+

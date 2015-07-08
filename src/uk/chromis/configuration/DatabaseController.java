@@ -24,8 +24,11 @@ package uk.chromis.configuration;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -35,7 +38,17 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
+import liquibase.Liquibase;
+import liquibase.database.Database;
+import liquibase.database.DatabaseFactory;
+import liquibase.database.jvm.JdbcConnection;
+import liquibase.exception.DatabaseException;
+import liquibase.exception.LiquibaseException;
+import liquibase.resource.ClassLoaderResourceAccessor;
+import org.hibernate.Session;
+import org.hibernate.internal.SessionImpl;
 import uk.chromis.forms.AppConfig;
+import uk.chromis.hibernate.HibernateUtil;
 import uk.chromis.utils.AltEncrypter;
 import uk.chromis.utils.DirtyManager;
 
@@ -57,6 +70,7 @@ public class DatabaseController implements Initializable {
 
     private final DirtyManager dirty = new DirtyManager();
     private String display;
+    private AltEncrypter cypher;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -118,7 +132,7 @@ public class DatabaseController implements Initializable {
         String sDBUser = AppConfig.getInstance().getProperty("db.user");
         String sDBPassword = AppConfig.getInstance().getProperty("db.password");
         if (sDBUser != null && sDBPassword != null && sDBPassword.startsWith("crypt:")) {
-            AltEncrypter cypher = new AltEncrypter("cypherkey" + sDBUser);
+            cypher = new AltEncrypter("cypherkey" + sDBUser);
             sDBPassword = cypher.decrypt(sDBPassword.substring(6));
         }
         jtxtDbUser.setText(sDBUser);
@@ -133,7 +147,7 @@ public class DatabaseController implements Initializable {
         dirty.resetDirty();
     }
 
-    public void handleSaveClick() throws IOException {
+    public void handleSaveClick() throws IOException, LiquibaseException {
         AppConfig.getInstance().setProperty("db.engine", jcboDBDriver.getValue());
         AppConfig.getInstance().setProperty("screen.displaynumber", displayNumber.getValue().toString());
         AppConfig.getInstance().setProperty("db.driver", jtxtDbDriver.getText());
@@ -145,9 +159,38 @@ public class DatabaseController implements Initializable {
 
         AppConfig.getInstance().save();
         dirty.resetDirty();
+
+        
+        Boolean error = false;
+        try {
+            HibernateUtil.getSessionFactory().openSession();
+        } catch (Exception ex) {
+            error = true;
+        } 
+        if (error == false) {
+            String sDBUser = AppConfig.getInstance().getProperty("db.user");
+            String sDBPassword = AppConfig.getInstance().getProperty("db.password");
+            if (sDBUser != null && sDBPassword != null && sDBPassword.startsWith("crypt:")) {
+                cypher = new AltEncrypter("cypherkey" + sDBUser);
+                sDBPassword = cypher.decrypt(sDBPassword.substring(6));
+            }
+            String url = AppConfig.getInstance().getProperty("db.URL");
+            Session session = HibernateUtil.getSessionFactory().openSession();
+            SessionImpl sessionImpl = (SessionImpl) session;
+
+            Connection connection = sessionImpl.connection();
+            try {
+                String changelog = "uk/chromis/createtable/kitchentable.xml";
+                Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
+                Liquibase liquibase = new Liquibase(changelog, new ClassLoaderResourceAccessor(), database);
+                liquibase.update("implement");
+            } catch (DatabaseException e) {
+            }
+        }
+
     }
 
-    public void handleExitClick() throws IOException {
+    public void handleExitClick() throws IOException, LiquibaseException {
         if (dirty.isDirty()) {
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("Exit Configuration");
@@ -165,6 +208,7 @@ public class DatabaseController implements Initializable {
             }
         }
         System.exit(0);
+
     }
 
 }
