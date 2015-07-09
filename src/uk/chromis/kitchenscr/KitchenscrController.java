@@ -35,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -42,6 +43,8 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.SwipeEvent;
+import javafx.scene.input.TouchEvent;
 import uk.chromis.dto.Orders;
 import uk.chromis.forms.AppConfig;
 import uk.chromis.utils.DataLogicKitchen;
@@ -84,7 +87,6 @@ public class KitchenscrController implements Initializable {
     public ListView order7items;
 
     public ListView orderlist;
-
 
     private Label tmpLabel;
     // private long startTime;
@@ -147,6 +149,10 @@ public class KitchenscrController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
+        if ("monitor".equals(KitchenScr.parameter)) {
+            completed.setVisible(false);
+        }
+
         dl_kitchen = new DataLogicKitchen();
 
         new javax.swing.Timer(1000, new PrintTimeAction()).start();
@@ -185,6 +191,15 @@ public class KitchenscrController implements Initializable {
             updateButtonText(ticketIds.get(7));
         });
 
+        order1items.setOnSwipeDown(new EventHandler<SwipeEvent>() {
+            @Override
+            public void handle(SwipeEvent event) {
+                selectedOrder = orderIds.get(1);
+                System.out.println("Swiped down");
+                event.consume();
+            }
+        });
+
         try {
             if (AppConfig.getInstance().getProperty("clock.time") != null) {
                 dateFormat = new SimpleDateFormat(AppConfig.getInstance().getProperty("clock.time"));
@@ -204,14 +219,24 @@ public class KitchenscrController implements Initializable {
         alert.setTitle("Exit Kitchen");
         alert.setX(100);
         alert.setY(150);
-        alert.setHeaderText("Notice :  \nIf you close the kitchen for day any unprocessed orders will be deleted from the database.");
-        alert.setContentText("Do You want to close the Kitchen for the Day?");
-        ButtonType buttonSaveExit = new ButtonType("Close Kitchen");
+        if ("monitor".equals(KitchenScr.parameter)) {
+            alert.setHeaderText("");
+            alert.setContentText("Do You want to exit the Kitchen screen?");
+        } else {
+            alert.setHeaderText("Notice :  \nIf you close the kitchen for day any unprocessed orders will be deleted from the database.");
+            alert.setContentText("Do You want to close the Kitchen for the Day?");
+        }
+
+        ButtonType buttonClearExit = new ButtonType("Close Kitchen");
         ButtonType buttonCancel = new ButtonType("Cancel");
         ButtonType buttonExit = new ButtonType("Exit");
-        alert.getButtonTypes().setAll(buttonExit, buttonSaveExit, buttonCancel);
+        if ("monitor".equals(KitchenScr.parameter)) {
+            alert.getButtonTypes().setAll(buttonExit, buttonCancel);
+        } else {
+            alert.getButtonTypes().setAll(buttonExit, buttonClearExit, buttonCancel);
+        }
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == buttonSaveExit) {
+        if (result.get() == buttonClearExit) {
             dl_kitchen.removeAllOrders();
             System.exit(0);
         } else if (result.get() == buttonExit) {

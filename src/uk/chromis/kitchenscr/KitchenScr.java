@@ -22,7 +22,6 @@
  */
 package uk.chromis.kitchenscr;
 
-import java.sql.SQLException;
 import java.util.Optional;
 import javafx.application.Application;
 import static javafx.application.Application.STYLESHEET_MODENA;
@@ -34,9 +33,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.hibernate.HibernateException;
-import org.hibernate.JDBCException;
-import org.hibernate.Session;
 import uk.chromis.forms.AppConfig;
 import uk.chromis.forms.AppLocal;
 import uk.chromis.hibernate.HibernateUtil;
@@ -49,11 +45,13 @@ public class KitchenScr extends Application {
 
     private int width = 1024;
     private int height = 768;
-
+    public static String parameter;
+    
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) {    
+        if (args.length !=0) parameter = args[0];
         launch(args);
     }
 
