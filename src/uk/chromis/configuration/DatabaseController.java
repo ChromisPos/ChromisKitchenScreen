@@ -27,8 +27,8 @@ import java.net.URL;
 import java.sql.Connection;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -65,13 +65,17 @@ public class DatabaseController implements Initializable {
     public TextField jtxtDbUser;
     public TextField jtxtDbPassword;
     public TextField jtxtDialect;
+    public TextField jtxtWidth;
+    public TextField jtxtHeight;
     public Button save;
     public Spinner displayNumber;
+    public TextField jtxtClockFormat;
 
     private final DirtyManager dirty = new DirtyManager();
     private String display;
     private AltEncrypter cypher;
 
+    //  private ObservableList jtxtWidth = FXCollections.observableValue();
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
@@ -81,6 +85,9 @@ public class DatabaseController implements Initializable {
         jtxtDbURL.textProperty().addListener(dirty);
         jtxtDbUser.textProperty().addListener(dirty);
         jtxtDbPassword.textProperty().addListener(dirty);
+        jtxtWidth.textProperty().addListener(dirty);
+        jtxtHeight.textProperty().addListener(dirty);
+        jtxtClockFormat.textProperty().addListener(dirty);
 
         jcboDBDriver.setOnAction(e -> {
             if ("Apache Derby Client/Server".equals(jcboDBDriver.getValue())) {
@@ -120,8 +127,26 @@ public class DatabaseController implements Initializable {
                 jtxtDialect.setText("");
             }
         });
+        jtxtWidth.textProperty().addListener(new ChangeListener<String>() {
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                if (!checkNumber(newValue)) {
+                    jtxtWidth.setText(oldValue);
+                }
+            }
+        });
+
+        jtxtHeight.textProperty().addListener(new ChangeListener<String>() {
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                if (!checkNumber(newValue)) {
+                    jtxtHeight.setText(oldValue);
+                }
+            }
+        });
 
         loadProperties();
+
     }
 
     public void loadProperties() {
@@ -129,6 +154,8 @@ public class DatabaseController implements Initializable {
         jtxtDbDriver.setText(AppConfig.getInstance().getProperty("db.driver"));
         jtxtDbURL.setText(AppConfig.getInstance().getProperty("db.URL"));
         jtxtDialect.setText(AppConfig.getInstance().getProperty("db.dialect"));
+        jtxtWidth.setText(AppConfig.getInstance().getProperty("screen.width"));
+        jtxtHeight.setText(AppConfig.getInstance().getProperty("screen.height"));
         String sDBUser = AppConfig.getInstance().getProperty("db.user");
         String sDBPassword = AppConfig.getInstance().getProperty("db.password");
         if (sDBUser != null && sDBPassword != null && sDBPassword.startsWith("crypt:")) {
@@ -144,6 +171,14 @@ public class DatabaseController implements Initializable {
         } else {
             displayNumber.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9, Integer.parseInt(display)));
         }
+
+        if (jtxtWidth.getText() == null || "".equals(jtxtWidth.getText())) {
+            jtxtWidth.setText("1024");
+            jtxtHeight.setText("768");
+        }
+
+        jtxtClockFormat.setText(AppConfig.getInstance().getProperty("clock.time"));
+        
         dirty.resetDirty();
     }
 
@@ -156,17 +191,19 @@ public class DatabaseController implements Initializable {
         AltEncrypter cypher = new AltEncrypter("cypherkey" + jtxtDbUser.getText());
         AppConfig.getInstance().setProperty("db.password", "crypt:" + cypher.encrypt(new String(jtxtDbPassword.getText())));
         AppConfig.getInstance().setProperty("db.dialect", jtxtDialect.getText());
-
+        AppConfig.getInstance().setProperty("screen.width", jtxtWidth.getText());
+        AppConfig.getInstance().setProperty("screen.height", jtxtHeight.getText());
+        AppConfig.getInstance().setProperty("clock.time", jtxtClockFormat.getText());
+        
         AppConfig.getInstance().save();
         dirty.resetDirty();
 
-        
         Boolean error = false;
         try {
             HibernateUtil.getSessionFactory().openSession();
         } catch (Exception ex) {
             error = true;
-        } 
+        }
         if (error == false) {
             String sDBUser = AppConfig.getInstance().getProperty("db.user");
             String sDBPassword = AppConfig.getInstance().getProperty("db.password");
@@ -211,4 +248,12 @@ public class DatabaseController implements Initializable {
 
     }
 
+    public Boolean checkNumber(String number) {
+        if (number == null) {
+            return true;
+        }
+        String regex = "[0-9]+";
+        return number.matches(regex);
+
+    }
 }

@@ -71,7 +71,7 @@ public class KitchenScr extends Application {
             Stage secondaryStage = new Stage();
             Parent root = FXMLLoader.load(getClass().getResource("/uk/chromis/configuration/database.fxml"));
             secondaryStage.setTitle("Database Configuration - v" + AppLocal.APP_VERSION);
-            secondaryStage.setScene(new Scene(root, 600, 350));
+            secondaryStage.setScene(new Scene(root, 600, 380));
             setUserAgentStylesheet(STYLESHEET_MODENA);
             secondaryStage.showAndWait();
         };
