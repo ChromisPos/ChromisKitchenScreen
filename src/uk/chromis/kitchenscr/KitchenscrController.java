@@ -22,6 +22,7 @@
  */
 package uk.chromis.kitchenscr;
 
+import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.net.URL;
 import java.text.DateFormat;
@@ -191,15 +192,17 @@ public class KitchenscrController implements Initializable {
             updateButtonText(ticketIds.get(7));
         });
 
-        order1items.setOnSwipeDown(new EventHandler<SwipeEvent>() {
+  /*      order1items.setOnSwipeDown(new EventHandler<SwipeEvent>() {
             @Override
             public void handle(SwipeEvent event) {
                 selectedOrder = orderIds.get(1);
+                Toolkit tk = Toolkit.getDefaultToolkit();
+                tk.beep();
                 System.out.println("Swiped down");
                 event.consume();
             }
         });
-
+*/
         try {
             if (AppConfig.getInstance().getProperty("clock.time") != null) {
                 dateFormat = new SimpleDateFormat(AppConfig.getInstance().getProperty("clock.time"));

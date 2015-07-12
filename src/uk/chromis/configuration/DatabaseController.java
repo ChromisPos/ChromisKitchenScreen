@@ -22,6 +22,8 @@
  */
 package uk.chromis.configuration;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
@@ -74,6 +76,7 @@ public class DatabaseController implements Initializable {
     private final DirtyManager dirty = new DirtyManager();
     private String display;
     private AltEncrypter cypher;
+    private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
     //  private ObservableList jtxtWidth = FXCollections.observableValue();
     @Override
@@ -178,7 +181,7 @@ public class DatabaseController implements Initializable {
         }
 
         jtxtClockFormat.setText(AppConfig.getInstance().getProperty("clock.time"));
-        
+
         dirty.resetDirty();
     }
 
@@ -191,10 +194,18 @@ public class DatabaseController implements Initializable {
         AltEncrypter cypher = new AltEncrypter("cypherkey" + jtxtDbUser.getText());
         AppConfig.getInstance().setProperty("db.password", "crypt:" + cypher.encrypt(new String(jtxtDbPassword.getText())));
         AppConfig.getInstance().setProperty("db.dialect", jtxtDialect.getText());
+        if (Integer.parseInt(jtxtHeight.getText()) > screenSize.height) {
+            jtxtHeight.setText(String.valueOf(screenSize.height));
+        }
+
+        if (Integer.parseInt(jtxtWidth.getText()) > screenSize.width) {
+            jtxtWidth.setText(String.valueOf(screenSize.width));
+        }
+        
         AppConfig.getInstance().setProperty("screen.width", jtxtWidth.getText());
         AppConfig.getInstance().setProperty("screen.height", jtxtHeight.getText());
         AppConfig.getInstance().setProperty("clock.time", jtxtClockFormat.getText());
-        
+
         AppConfig.getInstance().save();
         dirty.resetDirty();
 

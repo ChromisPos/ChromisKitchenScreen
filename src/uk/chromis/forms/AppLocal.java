@@ -33,7 +33,7 @@ public class AppLocal {
 */
 public static final String APP_NAME = "Chromis Kitchen Screen";
 public static final String APP_ID = "chromis";
-public static final String APP_VERSION = "1.31";
+public static final String APP_VERSION = "1.32";
 
       
 private AppLocal() {
