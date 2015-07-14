@@ -22,7 +22,6 @@
  */
 package uk.chromis.kitchenscr;
 
-import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.net.URL;
 import java.text.DateFormat;
@@ -36,7 +35,6 @@ import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -44,8 +42,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.SwipeEvent;
-import javafx.scene.input.TouchEvent;
 import uk.chromis.dto.Orders;
 import uk.chromis.forms.AppConfig;
 import uk.chromis.utils.DataLogicKitchen;
@@ -90,7 +86,6 @@ public class KitchenscrController implements Initializable {
     public ListView orderlist;
 
     private Label tmpLabel;
-    // private long startTime;
     private DateFormat dateFormat;
     private String hms;
     public static String selectedOrder;
@@ -192,17 +187,6 @@ public class KitchenscrController implements Initializable {
             updateButtonText(ticketIds.get(7));
         });
 
-  /*      order1items.setOnSwipeDown(new EventHandler<SwipeEvent>() {
-            @Override
-            public void handle(SwipeEvent event) {
-                selectedOrder = orderIds.get(1);
-                Toolkit tk = Toolkit.getDefaultToolkit();
-                tk.beep();
-                System.out.println("Swiped down");
-                event.consume();
-            }
-        });
-*/
         try {
             if (AppConfig.getInstance().getProperty("clock.time") != null) {
                 dateFormat = new SimpleDateFormat(AppConfig.getInstance().getProperty("clock.time"));

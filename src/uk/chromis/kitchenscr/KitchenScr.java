@@ -46,12 +46,14 @@ public class KitchenScr extends Application {
     private int width = 1024;
     private int height = 768;
     public static String parameter;
-    
+
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {    
-        if (args.length !=0) parameter = args[0];
+    public static void main(String[] args) {
+        if (args.length != 0) {
+            parameter = args[0];
+        }
         launch(args);
     }
 
