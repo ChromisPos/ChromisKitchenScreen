@@ -45,6 +45,9 @@ public class KitchenScr extends Application {
 
     private int width = 1024;
     private int height = 768;
+    private int scrXpos = 0;
+    private int scrYpos = 0;
+
     public static String parameter;
 
     /**
@@ -78,6 +81,21 @@ public class KitchenScr extends Application {
             secondaryStage.showAndWait();
         };
 
+        
+        
+        
+        
+        try {
+            if (AppConfig.getInstance().getProperty("screen.width") != null) {
+                width = Integer.parseInt(AppConfig.getInstance().getProperty("screen.width"));
+            }
+            if (AppConfig.getInstance().getProperty("screen.height") != null) {
+                height = Integer.parseInt(AppConfig.getInstance().getProperty("screen.height"));
+            }
+        } catch (IllegalArgumentException e) {
+            width = 1024;
+            height = 768;
+        }
         try {
             if (AppConfig.getInstance().getProperty("screen.width") != null) {
                 width = Integer.parseInt(AppConfig.getInstance().getProperty("screen.width"));
@@ -90,8 +108,22 @@ public class KitchenScr extends Application {
             height = 768;
         }
 
+        try {
+            if (AppConfig.getInstance().getProperty("screen.xpos") != null) {
+                width = Integer.parseInt(AppConfig.getInstance().getProperty("screen.width"));
+            }
+            if (AppConfig.getInstance().getProperty("screen.ypos") != null) {
+                height = Integer.parseInt(AppConfig.getInstance().getProperty("screen.height"));
+            }
+        } catch (IllegalArgumentException e) {
+            scrXpos = 0;
+            scrYpos = 0;
+        }
+
         Parent root = FXMLLoader.load(getClass().getResource("kitchenscr.fxml"));
         primaryStage.setTitle("Kitchen Orders");
+        primaryStage.setX(scrXpos);
+        primaryStage.setY(scrYpos);
         primaryStage.setScene(new Scene(root, width, height));
         primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.show();

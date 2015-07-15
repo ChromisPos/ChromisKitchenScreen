@@ -29,17 +29,30 @@ import java.net.URL;
 import java.sql.Connection;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
@@ -53,6 +66,7 @@ import uk.chromis.forms.AppConfig;
 import uk.chromis.hibernate.HibernateUtil;
 import uk.chromis.utils.AltEncrypter;
 import uk.chromis.utils.DirtyManager;
+import javafx.geometry.Pos;
 
 /**
  * FXML Controller class
@@ -78,7 +92,6 @@ public class DatabaseController implements Initializable {
     private AltEncrypter cypher;
     private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-    //  private ObservableList jtxtWidth = FXCollections.observableValue();
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
@@ -201,7 +214,7 @@ public class DatabaseController implements Initializable {
         if (Integer.parseInt(jtxtWidth.getText()) > screenSize.width) {
             jtxtWidth.setText(String.valueOf(screenSize.width));
         }
-        
+
         AppConfig.getInstance().setProperty("screen.width", jtxtWidth.getText());
         AppConfig.getInstance().setProperty("screen.height", jtxtHeight.getText());
         AppConfig.getInstance().setProperty("clock.time", jtxtClockFormat.getText());
@@ -239,6 +252,62 @@ public class DatabaseController implements Initializable {
     }
 
     public void handleExitClick() throws IOException, LiquibaseException {
+
+       
+         //this section is the raspberry PI
+         final Stage dialogStage = new Stage();
+
+         dialogStage.initModality(Modality.WINDOW_MODAL);
+         Label label = new Label("You have changed data, that has not been changed. What do you wish to do? ");
+
+         Button saveAndExitButton = new Button("Save & Exit");
+         Button exitButton = new Button("Exit");
+
+         exitButton.setOnAction(new EventHandler<ActionEvent>() {
+         @Override
+         public void handle(ActionEvent arg0) {
+         System.exit(0);
+
+         }
+         });
+
+         saveAndExitButton.setOnAction(new EventHandler<ActionEvent>() {
+         @Override
+         public void handle(ActionEvent arg0) {
+             try {
+                 handleSaveClick();
+             } catch (IOException ex) {
+                 Logger.getLogger(DatabaseController.class.getName()).log(Level.SEVERE, null, ex);
+             } catch (LiquibaseException ex) {
+                 Logger.getLogger(DatabaseController.class.getName()).log(Level.SEVERE, null, ex);
+             }
+         System.exit(0);
+         }
+         });
+
+
+
+         HBox hBox = new HBox();
+         hBox.setAlignment(Pos.BASELINE_RIGHT);
+         hBox.setSpacing(10.0);
+         exitButton.setPrefWidth(90);
+         saveAndExitButton.setPrefWidth(90);
+         
+
+         hBox.getChildren().addAll(saveAndExitButton, exitButton);
+         hBox.setMargin(exitButton, new Insets(0, 20, 0, 0));
+         VBox vBox = new VBox();
+         vBox.getChildren().addAll(label, hBox);
+
+         dialogStage.setScene(new Scene(vBox, 325, 150, Color.CORAL));
+
+         dialogStage.initModality(Modality.APPLICATION_MODAL);
+         dialogStage.initStyle(StageStyle.UNDECORATED);
+         dialogStage.setX(100);
+         dialogStage.setY(150);
+         dialogStage.show();                
+        
+        // all other version 
         if (dirty.isDirty()) {
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("Exit Configuration");

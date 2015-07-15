@@ -23,6 +23,7 @@
 package uk.chromis.kitchenscr;
 
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -35,13 +36,27 @@ import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Separator;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import uk.chromis.dto.Orders;
 import uk.chromis.forms.AppConfig;
 import uk.chromis.utils.DataLogicKitchen;
@@ -202,6 +217,66 @@ public class KitchenscrController implements Initializable {
     }
 
     public void handleExitClick() {
+
+        /*
+         //this section is the raspberry PI
+         final Stage dialogStage = new Stage();
+
+         dialogStage.initModality(Modality.WINDOW_MODAL);
+         Label label1 = new Label("\n  Notice :  \n  If you close the kitchen for the day any unprocessed orders will be deleted from the database.\n ");
+         Label label2 = new Label("\n  Do You want to close the Kitchen for the Day?\n");
+
+         Button cancelButton = new Button("Cancel");
+         Button closeKitchenButton = new Button("Close Kitchen");
+         Button exitButton = new Button("Exit");
+         Separator spacerBar = new Separator();
+         spacerBar.setPrefWidth(600);
+         exitButton.setOnAction(new EventHandler<ActionEvent>() {
+         @Override
+         public void handle(ActionEvent arg0) {
+         System.exit(0);
+
+         }
+         });
+
+         cancelButton.setOnAction(new EventHandler<ActionEvent>() {
+         @Override
+         public void handle(ActionEvent arg0) {
+         dialogStage.close();
+         }
+         });
+
+         closeKitchenButton.setOnAction(new EventHandler<ActionEvent>() {
+         @Override
+         public void handle(ActionEvent arg0) {
+         dl_kitchen.removeAllOrders();
+         System.exit(0);
+         }
+         });
+
+         HBox hBox = new HBox();
+         hBox.setAlignment(Pos.BASELINE_RIGHT);
+         hBox.setSpacing(10.0);
+         exitButton.setPrefWidth(90);
+         closeKitchenButton.setPrefWidth(90);
+         cancelButton.setPrefWidth(90);
+
+         hBox.getChildren().addAll(exitButton, closeKitchenButton, cancelButton);
+         hBox.setMargin(cancelButton, new Insets(0, 20, 0, 0));
+         VBox vBox = new VBox();
+         vBox.getChildren().addAll(label1, spacerBar, label2, hBox);
+
+         dialogStage.setScene(new Scene(vBox, 625, 150, Color.CORAL));
+
+         dialogStage.initModality(Modality.APPLICATION_MODAL);
+         dialogStage.initStyle(StageStyle.UNDECORATED);
+         dialogStage.setX(100);
+         dialogStage.setY(150);
+         dialogStage.show();                
+         */
+        
+        
+        // this is for other versions
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Exit Kitchen");
         alert.setX(100);
@@ -210,7 +285,7 @@ public class KitchenscrController implements Initializable {
             alert.setHeaderText("");
             alert.setContentText("Do You want to exit the Kitchen screen?");
         } else {
-            alert.setHeaderText("Notice :  \nIf you close the kitchen for day any unprocessed orders will be deleted from the database.");
+            alert.setHeaderText("Notice :  \nIf you close the kitchen for the day any unprocessed orders will be deleted from the database.");
             alert.setContentText("Do You want to close the Kitchen for the Day?");
         }
 
