@@ -29,19 +29,27 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Separator;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import uk.chromis.dto.Orders;
 import uk.chromis.forms.AppConfig;
 import uk.chromis.utils.DataLogicKitchen;
@@ -51,7 +59,7 @@ import uk.chromis.utils.DataLogicKitchen;
  *
  * @author John Lewis 2015
  */
-public class KitchenscrController implements Initializable {
+public class RaspberryPiScrController implements Initializable {
 
     public Button exit;
     public Button completed;
@@ -202,34 +210,59 @@ public class KitchenscrController implements Initializable {
     }
 
     public void handleExitClick() {
+        //this section is the raspberry PI
+        final Stage dialogStage = new Stage();
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Exit Kitchen");
-        alert.setX(100);
-        alert.setY(150);
-        if ("monitor".equals(KitchenScr.parameter)) {
-            alert.setHeaderText("");
-            alert.setContentText("Do You want to exit the Kitchen screen?");
-        } else {
-            alert.setHeaderText("Notice :  \nIf you close the kitchen for the day any unprocessed orders will be deleted from the database.");
-            alert.setContentText("Do You want to close the Kitchen for the Day?");
-        }
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+        Label label1 = new Label("\n  Notice :  \n  If you close the kitchen for the day any unprocessed orders will be deleted from the database.\n ");
+        Label label2 = new Label("\n  Do You want to close the Kitchen for the Day?\n");
 
-        ButtonType buttonClearExit = new ButtonType("Close Kitchen");
-        ButtonType buttonCancel = new ButtonType("Cancel");
-        ButtonType buttonExit = new ButtonType("Exit");
-        if ("monitor".equals(KitchenScr.parameter)) {
-            alert.getButtonTypes().setAll(buttonExit, buttonCancel);
-        } else {
-            alert.getButtonTypes().setAll(buttonExit, buttonClearExit, buttonCancel);
-        }
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == buttonClearExit) {
-            dl_kitchen.removeAllOrders();
-            System.exit(0);
-        } else if (result.get() == buttonExit) {
-            System.exit(0);
-        }
+        Button cancelButton = new Button("Cancel");
+        Button closeKitchenButton = new Button("Close Kitchen");
+        Button exitButton = new Button("Exit");
+        Separator spacerBar = new Separator();
+        spacerBar.setPrefWidth(600);
+        exitButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent arg0) {
+                System.exit(0);
+
+            }
+        });
+
+        cancelButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent arg0) {
+                dialogStage.close();
+            }
+        });
+
+        closeKitchenButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent arg0) {
+                dl_kitchen.removeAllOrders();
+                System.exit(0);
+            }
+        });
+
+        HBox hBox = new HBox();
+        hBox.setAlignment(Pos.BASELINE_RIGHT);
+        hBox.setSpacing(10.0);
+        exitButton.setPrefWidth(90);
+        closeKitchenButton.setPrefWidth(90);
+        cancelButton.setPrefWidth(90);
+
+        hBox.getChildren().addAll(exitButton, closeKitchenButton, cancelButton);
+        hBox.setMargin(cancelButton, new Insets(0, 20, 0, 0));
+        VBox vBox = new VBox();
+        vBox.getChildren().addAll(label1, spacerBar, label2, hBox);
+
+        dialogStage.setScene(new Scene(vBox, 625, 150));
+        dialogStage.setTitle("Exit Kitchen Screen");
+
+        dialogStage.initModality(Modality.APPLICATION_MODAL);
+        dialogStage.initStyle(StageStyle.UTILITY);
+        dialogStage.showAndWait();
     }
 
     public void handleCompleteOrder() {
@@ -318,33 +351,33 @@ public class KitchenscrController implements Initializable {
             orders = dl_kitchen.selectByOrderId(distinct.get(j));
 
             for (Orders order : orders) {
-                KitchenscrController.ticketIds.put(j, order.getTicketid());
-                ((Label) KitchenscrController.idLabels.get(j)).setText(order.getTicketid());
-                KitchenscrController.startTimes.put(j, order.getOrdertime().getTime());
-                KitchenscrController.orderIds.put(j, order.getOrderid());
-                KitchenscrController.orderLists.get(j).add((order.getQty() > 1 ? order.getQty() + " x " : "") + order.getDetails());
+                RaspberryPiScrController.ticketIds.put(j, order.getTicketid());
+                ((Label) RaspberryPiScrController.idLabels.get(j)).setText(order.getTicketid());
+                RaspberryPiScrController.startTimes.put(j, order.getOrdertime().getTime());
+                RaspberryPiScrController.orderIds.put(j, order.getOrderid());
+                RaspberryPiScrController.orderLists.get(j).add((order.getQty() > 1 ? order.getQty() + " x " : "") + order.getDetails());
                 if (!"".equals(order.getAttributes())) {
-                    KitchenscrController.orderLists.get(j).add(" ~~ " + order.getAttributes());
+                    RaspberryPiScrController.orderLists.get(j).add(" ~~ " + order.getAttributes());
                 }
                 if (order.getNotes() != null) {
-                    KitchenscrController.orderLists.get(j).add(" ~~ " + order.getNotes());
+                    RaspberryPiScrController.orderLists.get(j).add(" ~~ " + order.getNotes());
                 }
             }
         }
 
         if (distinct.size() < 8) {
             for (int j = distinct.size(); j < 8; j++) {
-                ((Label) KitchenscrController.idLabels.get(j)).setText("");
-                ((Label) KitchenscrController.timeLabels.get(j)).setText("");
-                KitchenscrController.startTimes.put(j, (long) 0);
-                KitchenscrController.orderLists.get(j).clear();
+                ((Label) RaspberryPiScrController.idLabels.get(j)).setText("");
+                ((Label) RaspberryPiScrController.timeLabels.get(j)).setText("");
+                RaspberryPiScrController.startTimes.put(j, (long) 0);
+                RaspberryPiScrController.orderLists.get(j).clear();
             }
         }
 
         if (distinct.size() > 7) {
             for (int j = 8; j < distinct.size(); j++) {
                 orders = dl_kitchen.selectByOrderId(distinct.get(j));
-                KitchenscrController.ordersWaiting.add(orders.get(0).getTicketid());
+                RaspberryPiScrController.ordersWaiting.add(orders.get(0).getTicketid());
             }
         }
         updateDisplays();
@@ -352,15 +385,15 @@ public class KitchenscrController implements Initializable {
 
     // clear the list of order items being shown
     private void resetItemDisplays() {
-        KitchenscrController.order0list.clear();
-        KitchenscrController.order1list.clear();
-        KitchenscrController.order2list.clear();
-        KitchenscrController.order3list.clear();
-        KitchenscrController.order4list.clear();
-        KitchenscrController.order5list.clear();
-        KitchenscrController.order6list.clear();
-        KitchenscrController.order7list.clear();
-        KitchenscrController.ordersWaiting.clear();
+        RaspberryPiScrController.order0list.clear();
+        RaspberryPiScrController.order1list.clear();
+        RaspberryPiScrController.order2list.clear();
+        RaspberryPiScrController.order3list.clear();
+        RaspberryPiScrController.order4list.clear();
+        RaspberryPiScrController.order5list.clear();
+        RaspberryPiScrController.order6list.clear();
+        RaspberryPiScrController.order7list.clear();
+        RaspberryPiScrController.ordersWaiting.clear();
 
     }
 

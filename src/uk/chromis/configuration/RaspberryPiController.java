@@ -27,19 +27,25 @@ import java.awt.Toolkit;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
-import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
@@ -53,15 +59,17 @@ import uk.chromis.forms.AppConfig;
 import uk.chromis.hibernate.HibernateUtil;
 import uk.chromis.utils.AltEncrypter;
 import uk.chromis.utils.DirtyManager;
+import javafx.geometry.Pos;
+import javafx.scene.layout.AnchorPane;
 
 /**
  * FXML Controller class
  *
  */
-public class DatabaseController implements Initializable {
-
+public class RaspberryPiController implements Initializable {
+    
     public ComboBox<String> jcboDBDriver;
-
+    
     public TextField jtxtDbDriver;
     public TextField jtxtDbURL;
     public TextField jtxtDbUser;
@@ -70,19 +78,19 @@ public class DatabaseController implements Initializable {
     public TextField jtxtWidth;
     public TextField jtxtHeight;
     public Button save;
-    public Spinner displayNumber;
+    public TextField jtxtDisplayNumber;
     public TextField jtxtClockFormat;
-
+    
     private final DirtyManager dirty = new DirtyManager();
     private String display;
     private AltEncrypter cypher;
     private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
+        
         jcboDBDriver.valueProperty().addListener(dirty);
-        displayNumber.valueProperty().addListener(dirty);
+        jtxtDisplayNumber.textProperty().addListener(dirty);
         jtxtDbDriver.textProperty().addListener(dirty);
         jtxtDbURL.textProperty().addListener(dirty);
         jtxtDbUser.textProperty().addListener(dirty);
@@ -90,38 +98,38 @@ public class DatabaseController implements Initializable {
         jtxtWidth.textProperty().addListener(dirty);
         jtxtHeight.textProperty().addListener(dirty);
         jtxtClockFormat.textProperty().addListener(dirty);
-
+        
         jcboDBDriver.setOnAction(e -> {
             if ("Apache Derby Client/Server".equals(jcboDBDriver.getValue())) {
-                displayNumber.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9, 1));
+                jtxtDisplayNumber.setText("1");
                 jtxtDbDriver.setText("org.apache.derby.jdbc.ClientDriver");
                 jtxtDbURL.setText("jdbc:derby://localhost:1527/unicentaopos");
                 jtxtDbUser.setText("");
                 jtxtDbPassword.setText("");
                 jtxtDialect.setText("org.hibernate.dialect.DerbyDialect");
             } else if ("MySQL".equals(jcboDBDriver.getValue())) {
-                displayNumber.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9, 1));
+                jtxtDisplayNumber.setText("1");
                 jtxtDbDriver.setText("com.mysql.jdbc.Driver");
                 jtxtDbURL.setText("jdbc:mysql://localhost:3306/unicentaopos");
                 jtxtDbUser.setText("");
                 jtxtDbPassword.setText("");
                 jtxtDialect.setText("org.hibernate.dialect.MySQLDialect");
             } else if ("Oracle 11g Express".equals(jcboDBDriver.getValue())) {
-                displayNumber.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9, 1));
+                jtxtDisplayNumber.setText("1");
                 jtxtDbDriver.setText("oracle.jdbc.driver.OracleDriver");
                 jtxtDbURL.setText("jdbc:oracle:thin://localhost:1521/unicentaopos");
                 jtxtDbUser.setText("");
                 jtxtDbPassword.setText("");
                 jtxtDialect.setText("org.hibernate.dialect.OracleDialect");
             } else if ("PostgreSQL".equals(jcboDBDriver.getValue())) {
-                displayNumber.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9, 1));
+                jtxtDisplayNumber.setText("1");
                 jtxtDbDriver.setText("org.postgresql.Driver");
                 jtxtDbURL.setText("jdbc:postgresql://localhost:5432/unicentaopos");
                 jtxtDbUser.setText("");
                 jtxtDbPassword.setText("");
                 jtxtDialect.setText("org.hibernate.dialect.PostgreSQLDialect");
             } else {
-                displayNumber.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9, 1));
+                jtxtDisplayNumber.setText("1");
                 jtxtDbDriver.setText("");
                 jtxtDbURL.setText("");
                 jtxtDbUser.setText("");
@@ -137,7 +145,7 @@ public class DatabaseController implements Initializable {
                 }
             }
         });
-
+        
         jtxtHeight.textProperty().addListener(new ChangeListener<String>() {
             public void changed(ObservableValue<? extends String> observable,
                     String oldValue, String newValue) {
@@ -146,12 +154,22 @@ public class DatabaseController implements Initializable {
                 }
             }
         });
-
+        
+        jtxtDisplayNumber.textProperty().addListener(new ChangeListener<String>() {
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                if (!checkNumber(newValue)) {
+                    jtxtDisplayNumber.setText(oldValue);
+                }
+            }
+        });
+        
         loadProperties();
-
+        
     }
-
+    
     public void loadProperties() {
+        jtxtDisplayNumber.setText(AppConfig.getInstance().getProperty("screen.displaynumber"));
         jcboDBDriver.setValue(AppConfig.getInstance().getProperty("db.engine"));
         jtxtDbDriver.setText(AppConfig.getInstance().getProperty("db.driver"));
         jtxtDbURL.setText(AppConfig.getInstance().getProperty("db.URL"));
@@ -166,27 +184,20 @@ public class DatabaseController implements Initializable {
         }
         jtxtDbUser.setText(sDBUser);
         jtxtDbPassword.setText(sDBPassword);
-
-        display = (AppConfig.getInstance().getProperty("screen.displaynumber"));
-        if (display == null || "".equals(display)) {
-            displayNumber.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9, 1));
-        } else {
-            displayNumber.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9, Integer.parseInt(display)));
-        }
-
+        
         if (jtxtWidth.getText() == null || "".equals(jtxtWidth.getText())) {
             jtxtWidth.setText("1024");
             jtxtHeight.setText("768");
         }
-
+        
         jtxtClockFormat.setText(AppConfig.getInstance().getProperty("clock.time"));
-
+        
         dirty.resetDirty();
     }
-
+    
     public void handleSaveClick() throws IOException, LiquibaseException {
         AppConfig.getInstance().setProperty("db.engine", jcboDBDriver.getValue());
-        AppConfig.getInstance().setProperty("screen.displaynumber", displayNumber.getValue().toString());
+        AppConfig.getInstance().setProperty("screen.displaynumber", jtxtDisplayNumber.getText());
         AppConfig.getInstance().setProperty("db.driver", jtxtDbDriver.getText());
         AppConfig.getInstance().setProperty("db.URL", jtxtDbURL.getText());
         AppConfig.getInstance().setProperty("db.user", jtxtDbUser.getText());
@@ -196,18 +207,18 @@ public class DatabaseController implements Initializable {
         if (Integer.parseInt(jtxtHeight.getText()) > screenSize.height) {
             jtxtHeight.setText(String.valueOf(screenSize.height));
         }
-
+        
         if (Integer.parseInt(jtxtWidth.getText()) > screenSize.width) {
             jtxtWidth.setText(String.valueOf(screenSize.width));
         }
-
+        
         AppConfig.getInstance().setProperty("screen.width", jtxtWidth.getText());
         AppConfig.getInstance().setProperty("screen.height", jtxtHeight.getText());
         AppConfig.getInstance().setProperty("clock.time", jtxtClockFormat.getText());
-
+        
         AppConfig.getInstance().save();
         dirty.resetDirty();
-
+        
         Boolean error = false;
         try {
             HibernateUtil.getSessionFactory().openSession();
@@ -224,7 +235,7 @@ public class DatabaseController implements Initializable {
             String url = AppConfig.getInstance().getProperty("db.URL");
             Session session = HibernateUtil.getSessionFactory().openSession();
             SessionImpl sessionImpl = (SessionImpl) session;
-
+            
             Connection connection = sessionImpl.connection();
             try {
                 String changelog = "uk/chromis/configuration/kitchentable.xml";
@@ -234,36 +245,75 @@ public class DatabaseController implements Initializable {
             } catch (DatabaseException e) {
             }
         }
-
+        
     }
-
-    public void handleExitClick() throws IOException, LiquibaseException {                    
+    
+    public void handleExitClick() throws IOException, LiquibaseException {
         if (dirty.isDirty()) {
-            Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("Exit Configuration");
-            alert.setHeaderText(null);
-            alert.setContentText("You have changed data, that has not been changed. What do you wish to do?");
-            ButtonType buttonSaveExit = new ButtonType("Save & Exit");
-            ButtonType buttonExit = new ButtonType("Exit");
-            alert.getButtonTypes().setAll(buttonSaveExit, buttonExit);
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == buttonSaveExit) {
-                handleSaveClick();
-                System.exit(0);
-            } else {
-                System.exit(0);
-            }
+            //this section is the raspberry PI
+            final Stage dialogStage = new Stage();
+            
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            Label label = new Label("\n     You have changed data, that has not been changed. What do \n     you wish to do? \n ");
+            
+            Button saveAndExitButton = new Button("Save & Exit");
+            Button exitButton = new Button("Exit");
+            
+            AnchorPane anchor = new AnchorPane();
+            anchor.setPrefSize(375, 120);
+            
+            exitButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent arg0) {
+                    System.exit(0);
+                    
+                }
+            });
+            
+            saveAndExitButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent arg0) {
+                    try {
+                        handleSaveClick();
+                        System.exit(0);
+                    } catch (IOException ex) {
+                        Logger.getLogger(DatabaseController.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (LiquibaseException ex) {
+                        Logger.getLogger(DatabaseController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            });
+            
+            HBox hBox = new HBox();
+            hBox.setPrefWidth(375);
+            hBox.setAlignment(Pos.BASELINE_RIGHT);
+            hBox.setSpacing(10.0);
+            exitButton.setPrefWidth(90);
+            saveAndExitButton.setPrefWidth(90);
+            
+            hBox.getChildren().addAll(saveAndExitButton, exitButton);
+            hBox.setMargin(exitButton, new Insets(0, 20, 0, 0));
+            VBox vBox = new VBox();
+            vBox.getChildren().addAll(label, hBox);
+            
+            anchor.getChildren().add(vBox);
+            
+            dialogStage.setScene(new Scene(anchor));
+            
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
+            dialogStage.initStyle(StageStyle.UTILITY);
+            dialogStage.setTitle("Exit Configuration");
+            dialogStage.showAndWait();
         }
         System.exit(0);
-
     }
-
+    
     public Boolean checkNumber(String number) {
         if (number == null) {
             return true;
         }
         String regex = "^$|[0-9]+";
         return number.matches(regex);
-
+        
     }
 }

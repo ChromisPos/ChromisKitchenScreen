@@ -26,11 +26,21 @@ import java.util.Optional;
 import javafx.application.Application;
 import static javafx.application.Application.STYLESHEET_MODENA;
 import static javafx.application.Application.setUserAgentStylesheet;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import uk.chromis.forms.AppConfig;
@@ -66,22 +76,57 @@ public class KitchenScr extends Application {
         try {
             HibernateUtil.getSessionFactory().openSession();
         } catch (Exception ex) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Database Error");
-            alert.setHeaderText(null);
-            alert.setContentText("Unable to connect to the database.");
-            ButtonType buttonOK = new ButtonType("OK");
-            alert.getButtonTypes().setAll(buttonOK);
-            Optional<ButtonType> result = alert.showAndWait();
-            Stage secondaryStage = new Stage();
-            Parent root = FXMLLoader.load(getClass().getResource("/uk/chromis/configuration/database.fxml"));
-            secondaryStage.setTitle("Database Configuration - v" + AppLocal.APP_VERSION);
-            secondaryStage.setScene(new Scene(root, 600, 380));
-            setUserAgentStylesheet(STYLESHEET_MODENA);
-            secondaryStage.showAndWait();
-        };
+            /*
+             Alert alert = new Alert(Alert.AlertType.INFORMATION);
+             alert.setTitle("Database Error");
+             alert.setHeaderText(null);
+             alert.setContentText("Unable to connect to the database.");
+             ButtonType buttonOK = new ButtonType("OK");
+             alert.getButtonTypes().setAll(buttonOK);
+             Optional<ButtonType> result = alert.showAndWait();
+             */
 
+            final Stage dialogStage = new Stage();
+
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            Label label = new Label("\n     Unable to connect to the database. \n \n  ");
+            Button okButton = new Button("OK");
+
+            AnchorPane anchor = new AnchorPane();
+            anchor.setPrefSize(375, 120);
+
+            okButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent arg0) {
+                    dialogStage.close();
+                }
+            });
+
+            HBox hBox = new HBox();
+            hBox.setPrefWidth(375);
+            hBox.setAlignment(Pos.BASELINE_RIGHT);
+            hBox.setSpacing(10.0);
+            okButton.setPrefWidth(90);
+            hBox.getChildren().addAll(okButton);
+            hBox.setMargin(okButton, new Insets(0, 20, 0, 0));
+            VBox vBox = new VBox();
+            vBox.getChildren().addAll(label, hBox);
+            anchor.getChildren().add(vBox);
+            dialogStage.setScene(new Scene(anchor));
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
+            dialogStage.initStyle(StageStyle.UTILITY);
+            dialogStage.setTitle("Database Error");
+            dialogStage.showAndWait();
         
+
+        Stage secondaryStage = new Stage();
+        //Parent root = FXMLLoader.load(getClass().getResource("/uk/chromis/configuration/database.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/uk/chromis/configuration/RaspberryPi.fxml"));
+        secondaryStage.setTitle("Database Configuration - v" + AppLocal.APP_VERSION);
+        secondaryStage.setScene(new Scene(root, 600, 380));
+        setUserAgentStylesheet(STYLESHEET_MODENA);
+        secondaryStage.showAndWait();
+        }
         
         
         
@@ -96,6 +141,7 @@ public class KitchenScr extends Application {
             width = 1024;
             height = 768;
         }
+
         try {
             if (AppConfig.getInstance().getProperty("screen.width") != null) {
                 width = Integer.parseInt(AppConfig.getInstance().getProperty("screen.width"));
@@ -120,7 +166,9 @@ public class KitchenScr extends Application {
             scrYpos = 0;
         }
 
-        Parent root = FXMLLoader.load(getClass().getResource("kitchenscr.fxml"));
+        // Parent root = FXMLLoader.load(getClass().getResource("kitchenscr.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("RaspberryScr.fxml"));
+
         primaryStage.setTitle("Kitchen Orders");
         primaryStage.setX(scrXpos);
         primaryStage.setY(scrYpos);
