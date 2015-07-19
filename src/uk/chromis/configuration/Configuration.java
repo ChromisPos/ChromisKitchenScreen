@@ -26,8 +26,7 @@ public class Configuration extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-      //  Parent root = FXMLLoader.load(getClass().getResource("database.fxml"));
-        Parent root = FXMLLoader.load(getClass().getResource("RaspberryPi.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("database.fxml"));      
         primaryStage.setTitle("Database Configuration - v" + AppLocal.APP_VERSION);
         primaryStage.setScene(new Scene(root, 600, 380));
         setUserAgentStylesheet(STYLESHEET_MODENA);

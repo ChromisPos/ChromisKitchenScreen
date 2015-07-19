@@ -75,8 +75,7 @@ public class KitchenScr extends Application {
 
         try {
             HibernateUtil.getSessionFactory().openSession();
-        } catch (Exception ex) {
-            /*
+        } catch (Exception ex) {          
              Alert alert = new Alert(Alert.AlertType.INFORMATION);
              alert.setTitle("Database Error");
              alert.setHeaderText(null);
@@ -84,44 +83,8 @@ public class KitchenScr extends Application {
              ButtonType buttonOK = new ButtonType("OK");
              alert.getButtonTypes().setAll(buttonOK);
              Optional<ButtonType> result = alert.showAndWait();
-             */
-
-            final Stage dialogStage = new Stage();
-
-            dialogStage.initModality(Modality.WINDOW_MODAL);
-            Label label = new Label("\n     Unable to connect to the database. \n \n  ");
-            Button okButton = new Button("OK");
-
-            AnchorPane anchor = new AnchorPane();
-            anchor.setPrefSize(375, 120);
-
-            okButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent arg0) {
-                    dialogStage.close();
-                }
-            });
-
-            HBox hBox = new HBox();
-            hBox.setPrefWidth(375);
-            hBox.setAlignment(Pos.BASELINE_RIGHT);
-            hBox.setSpacing(10.0);
-            okButton.setPrefWidth(90);
-            hBox.getChildren().addAll(okButton);
-            hBox.setMargin(okButton, new Insets(0, 20, 0, 0));
-            VBox vBox = new VBox();
-            vBox.getChildren().addAll(label, hBox);
-            anchor.getChildren().add(vBox);
-            dialogStage.setScene(new Scene(anchor));
-            dialogStage.initModality(Modality.APPLICATION_MODAL);
-            dialogStage.initStyle(StageStyle.UTILITY);
-            dialogStage.setTitle("Database Error");
-            dialogStage.showAndWait();
-        
-
         Stage secondaryStage = new Stage();
-        //Parent root = FXMLLoader.load(getClass().getResource("/uk/chromis/configuration/database.fxml"));
-        Parent root = FXMLLoader.load(getClass().getResource("/uk/chromis/configuration/RaspberryPi.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/uk/chromis/configuration/database.fxml"));        
         secondaryStage.setTitle("Database Configuration - v" + AppLocal.APP_VERSION);
         secondaryStage.setScene(new Scene(root, 600, 380));
         setUserAgentStylesheet(STYLESHEET_MODENA);
@@ -166,9 +129,7 @@ public class KitchenScr extends Application {
             scrYpos = 0;
         }
 
-        // Parent root = FXMLLoader.load(getClass().getResource("kitchenscr.fxml"));
-        Parent root = FXMLLoader.load(getClass().getResource("RaspberryScr.fxml"));
-
+        Parent root = FXMLLoader.load(getClass().getResource("kitchenscr.fxml"));
         primaryStage.setTitle("Kitchen Orders");
         primaryStage.setX(scrXpos);
         primaryStage.setY(scrYpos);

@@ -80,7 +80,7 @@ public class DatabaseController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
+     
         jcboDBDriver.valueProperty().addListener(dirty);
         displayNumber.valueProperty().addListener(dirty);
         jtxtDbDriver.textProperty().addListener(dirty);
