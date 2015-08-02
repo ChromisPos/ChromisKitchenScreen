@@ -60,8 +60,9 @@ public class DataLogicKitchen {
     public void removeOrder(String orderid) {
         init();
         session.beginTransaction();
-        Query query = session.createQuery("DELETE FROM ORDERS WHERE ORDERID = :id ");
+        Query query = session.createQuery("DELETE FROM ORDERS WHERE ORDERID = :id AND DISPLAYID = :display");
         query.setParameter("id", orderid);
+        query.setParameter("display",Integer.parseInt(AppConfig.getInstance().getProperty("screen.displaynumber")));
         int result = query.executeUpdate();
         session.getTransaction().commit();
         session.close();
@@ -78,7 +79,7 @@ public class DataLogicKitchen {
     
     
     public List<Orders> selectByOrderId(String orderid) {
-        String sql_query = "SELECT * FROM ORDERS WHERE ORDERID ='" + orderid + "' ";
+        String sql_query = "SELECT * FROM ORDERS WHERE ORDERID ='" + orderid + "' AND DISPLAYID = "  + Integer.parseInt(AppConfig.getInstance().getProperty("screen.displaynumber")) ;
         SQLQuery query = HibernateUtil.getSessionFactory().openSession().createSQLQuery(sql_query);
         query.addEntity(Orders.class);
         List<Orders> results = query.list();

@@ -69,7 +69,7 @@ public class HibernateUtil {
          configuration.setProperty("hibernate.c3p0.aquire_increment", "2");
          */
         //configuration.setProperty("hibernate.hbm2ddl.auto", "update");
-        configuration.setProperty("hibernate.show_sql", "false");
+        configuration.setProperty("hibernate.show_sql", "true");
         configuration.setProperty("hibernate.connection.pool_size", "5");
 
         configuration.addAnnotatedClass(Orders.class);
