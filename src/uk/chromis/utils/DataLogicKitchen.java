@@ -3,7 +3,7 @@
  Copyright (c) 2015 chromis.co.uk (John Lewis)
  http://www.chromis.co.uk
 
-kitchen Screen v1.01
+ kitchen Screen v1.42
 
  This file is part of chromis & its associated programs
 
@@ -20,9 +20,6 @@ kitchen Screen v1.01
  You should have received a copy of the GNU General Public License
  along with chromis.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-
-
 package uk.chromis.utils;
 
 import java.util.ArrayList;
@@ -38,6 +35,8 @@ import uk.chromis.hibernate.HibernateUtil;
 public class DataLogicKitchen {
 
     private Session session;
+    private String sql_query;
+    private Query query;
 
     public DataLogicKitchen() {
     }
@@ -46,10 +45,12 @@ public class DataLogicKitchen {
         session = HibernateUtil.getSessionFactory().openSession();
     }
 
-
     public List<String> readDistinctOrders() {
-     //   String sql_query = "SELECT DISTINCT ORDERID, ORDERTIME FROM ORDERS ORDER BY ORDERTIME ";
-        String sql_query = "SELECT DISTINCT ORDERID, ORDERTIME FROM ORDERS WHERE DISPLAYID = " + Integer.parseInt(AppConfig.getInstance().getProperty("screen.displaynumber")) + " ORDER BY ORDERTIME ";
+        if (Boolean.valueOf(AppConfig.getInstance().getProperty("screen.allorders"))) {
+            sql_query = "SELECT DISTINCT ORDERID, ORDERTIME FROM ORDERS ORDER BY ORDERTIME ";
+        } else {
+            sql_query = "SELECT DISTINCT ORDERID, ORDERTIME FROM ORDERS WHERE DISPLAYID = " + Integer.parseInt(AppConfig.getInstance().getProperty("screen.displaynumber")) + " ORDER BY ORDERTIME ";
+        }
         SQLQuery query = HibernateUtil.getSessionFactory().openSession().createSQLQuery(sql_query);
         query.addScalar("ORDERID");
         List results = query.list();
@@ -60,26 +61,35 @@ public class DataLogicKitchen {
     public void removeOrder(String orderid) {
         init();
         session.beginTransaction();
-        Query query = session.createQuery("DELETE FROM ORDERS WHERE ORDERID = :id AND DISPLAYID = :display");
+        if (Boolean.valueOf(AppConfig.getInstance().getProperty("screen.allorders"))) {
+            query = session.createQuery("DELETE FROM ORDERS WHERE ORDERID = :id ");
+        } else {
+            query = session.createQuery("DELETE FROM ORDERS WHERE ORDERID = :id AND DISPLAYID = :display");
+            query.setParameter("display", Integer.parseInt(AppConfig.getInstance().getProperty("screen.displaynumber")));
+        }
+
         query.setParameter("id", orderid);
-        query.setParameter("display",Integer.parseInt(AppConfig.getInstance().getProperty("screen.displaynumber")));
         int result = query.executeUpdate();
         session.getTransaction().commit();
         session.close();
     }
 
-        public void removeAllOrders() {
+    public void removeAllOrders() {
         init();
         session.beginTransaction();
-        Query query = session.createQuery("DELETE FROM ORDERS ");        
+        Query query = session.createQuery("DELETE FROM ORDERS ");
         int result = query.executeUpdate();
         session.getTransaction().commit();
         session.close();
     }
-    
-    
+
     public List<Orders> selectByOrderId(String orderid) {
-        String sql_query = "SELECT * FROM ORDERS WHERE ORDERID ='" + orderid + "' AND DISPLAYID = "  + Integer.parseInt(AppConfig.getInstance().getProperty("screen.displaynumber")) ;
+        if (Boolean.valueOf(AppConfig.getInstance().getProperty("screen.allorders"))) {
+            sql_query = "SELECT * FROM ORDERS WHERE ORDERID ='" + orderid + "' ";
+        } else {
+            sql_query = "SELECT * FROM ORDERS WHERE ORDERID ='" + orderid + "' AND DISPLAYID = " + Integer.parseInt(AppConfig.getInstance().getProperty("screen.displaynumber"));
+        }
+
         SQLQuery query = HibernateUtil.getSessionFactory().openSession().createSQLQuery(sql_query);
         query.addEntity(Orders.class);
         List<Orders> results = query.list();

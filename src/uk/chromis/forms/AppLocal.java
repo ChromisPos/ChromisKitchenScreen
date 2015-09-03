@@ -3,7 +3,7 @@
  Copyright (c) 2015 chromis.co.uk (John Lewis)
  http://www.chromis.co.uk
 
-kitchen Screen v1.01
+kitchen Screen v1.42
 
  This file is part of chromis & its associated programs
 
@@ -33,7 +33,7 @@ public class AppLocal {
 */
 public static final String APP_NAME = "Chromis Kitchen Screen";
 public static final String APP_ID = "chromis";
-public static final String APP_VERSION = "1.41";
+public static final String APP_VERSION = "1.42";
 
       
 private AppLocal() {

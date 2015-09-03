@@ -3,7 +3,7 @@
  Copyright (c) 2015 chromis.co.uk (John Lewis)
  http://www.chromis.co.uk
 
- kitchen Screen v1.01
+ kitchen Screen v1.42
 
  This file is part of chromis & its associated programs
 
@@ -107,7 +107,7 @@ public class AppConfig {
     private void loadDefault() {
         m_propsconfig.setProperty("db.engine", "MySql");
         m_propsconfig.setProperty("db.driver", "com.mysql.jdbc.Driver");
-        m_propsconfig.setProperty("db.URL", "jdbc:mysql://localhost:3306/unicenta");
+        m_propsconfig.setProperty("db.URL", "jdbc:mysql://localhost:3306/unicentaopos");
         m_propsconfig.setProperty("db.user", "");
         m_propsconfig.setProperty("db.password", "");
         m_propsconfig.setProperty("screen.displaynumber", "1");

@@ -3,7 +3,7 @@
  Copyright (c) 2015 chromis.co.uk (John Lewis)
  http://www.chromis.co.uk
 
- kitchen Screen v1.01
+ kitchen Screen v1.42
 
  This file is part of chromis & its associated programs
 
@@ -23,6 +23,8 @@
 package uk.chromis.kitchenscr;
 
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -150,7 +152,7 @@ public class KitchenscrController implements Initializable {
         }
 
         dl_kitchen = new DataLogicKitchen();
-
+        
         new javax.swing.Timer(1000, new PrintTimeAction()).start();
         new javax.swing.Timer(5000, new updateDisplay()).start();
 
@@ -374,5 +376,5 @@ public class KitchenscrController implements Initializable {
         order6items.setItems(order6list);
         order7items.setItems(order7list);
         orderlist.setItems(ordersWaiting);
-    }
+    }         
 }
