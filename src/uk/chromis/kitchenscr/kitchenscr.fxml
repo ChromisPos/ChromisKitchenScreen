@@ -250,7 +250,7 @@
                      <font>
                         <Font name="Tahoma Bold" size="18.0" />
                      </font></Button>
-                  <Button fx:id="exit" layoutX="943.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleExitClick" prefHeight="29.0" prefWidth="59.0" text="Exit" AnchorPane.bottomAnchor="7.0" AnchorPane.rightAnchor="20.0">
+                  <Button fx:id="exit" layoutX="954.0" layoutY="9.0" mnemonicParsing="false" onAction="#handleExitClick" prefHeight="29.0" prefWidth="59.0" text="Exit" AnchorPane.bottomAnchor="7.0" AnchorPane.rightAnchor="9.0">
                      <font>
                         <Font name="Tahoma Bold" size="18.0" />
                      </font></Button>
@@ -258,9 +258,15 @@
                      <font>
                         <Font name="Arial Bold" size="24.0" />
                      </font></Label>
+                  <Button fx:id="recall" layoutX="846.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleRecallOrder" prefHeight="33.0" prefWidth="90.0" text="Recall" AnchorPane.bottomAnchor="7.0" AnchorPane.rightAnchor="86.0">
+							<font>
+								<Font name="Tahoma Bold" size="18.0" />
+							</font>
+						</Button>
+                  <Text layoutX="-1.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" text="V1.50" />
+							
                </children></AnchorPane>
         </items>
       </SplitPane>
    </children>
 </AnchorPane>
-

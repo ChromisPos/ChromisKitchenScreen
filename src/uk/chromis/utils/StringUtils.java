@@ -1,9 +1,10 @@
 /*
- Chromis  - The future of Point Of Sale
- Copyright (c) 2015 chromis.co.uk (John Lewis)
+ Chromis POS  - The New Face of Open Source POS
+ Copyright (c) 2015 (John Lewis) Chromis.co.uk
+
  http://www.chromis.co.uk
 
- kitchen Screen v1.42
+ kitchen Screen v1.5
 
  This file is part of chromis & its associated programs
 
@@ -19,9 +20,7 @@
 
  You should have received a copy of the GNU General Public License
  along with chromis.  If not, see <http://www.gnu.org/licenses/>.
-
-*/
-
+ */
 
 package uk.chromis.utils;
 

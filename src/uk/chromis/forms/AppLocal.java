@@ -1,9 +1,10 @@
 /*
- Chromis  - The future of Point Of Sale
- Copyright (c) 2015 chromis.co.uk (John Lewis)
+ Chromis POS  - The New Face of Open Source POS
+ Copyright (c) 2015 (John Lewis) Chromis.co.uk
+
  http://www.chromis.co.uk
 
-kitchen Screen v1.42
+ kitchen Screen v1.5
 
  This file is part of chromis & its associated programs
 
@@ -21,8 +22,6 @@ kitchen Screen v1.42
  along with chromis.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
 package uk.chromis.forms;
 
 
@@ -33,7 +32,7 @@ public class AppLocal {
 */
 public static final String APP_NAME = "Chromis Kitchen Screen";
 public static final String APP_ID = "chromis";
-public static final String APP_VERSION = "1.42";
+public static final String APP_VERSION = "1.5";
 
       
 private AppLocal() {

@@ -26,7 +26,8 @@
             <column name="NOTES" type="varchar(255)" />
             <column name="TICKETID" type="varchar(50)" />
             <column name="ORDERTIME" type="timestamp" defaultValueDate="CURRENT_TIMESTAMP"/>         
-            <column name="DISPLAYID" type="int" defaultValueNumeric="1"/>                
+            <column name="DISPLAYID" type="int" defaultValueNumeric="1"/> 
+            <column name="AUXILIARY" type="int" defaultValueNumeric="0"/>              
         </createTable>
     </changeSet>
  

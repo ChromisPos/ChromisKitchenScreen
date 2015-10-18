@@ -1,9 +1,10 @@
 /*
- Chromis  - The future of Point Of Sale
- Copyright (c) 2015 chromis.co.uk (John Lewis)
+ Chromis POS  - The New Face of Open Source POS
+ Copyright (c) 2015 (John Lewis) Chromis.co.uk
+
  http://www.chromis.co.uk
 
- kitchen Screen v1.42
+ kitchen Screen v1.5
 
  This file is part of chromis & its associated programs
 
@@ -20,11 +21,10 @@
  You should have received a copy of the GNU General Public License
  along with chromis.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package uk.chromis.kitchenscr;
 
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -37,16 +37,23 @@ import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import uk.chromis.dto.Orders;
 import uk.chromis.forms.AppConfig;
 import uk.chromis.utils.DataLogicKitchen;
+import uk.chromis.utils.FixedStack;
 
 /**
  * FXML Controller class
@@ -57,6 +64,7 @@ public class KitchenscrController implements Initializable {
 
     public Button exit;
     public Button completed;
+    public Button recall;
     public Label clock;
 
     public Label order0id;
@@ -90,7 +98,9 @@ public class KitchenscrController implements Initializable {
     private Label tmpLabel;
     private DateFormat dateFormat;
     private String hms;
-    public static String selectedOrder;
+    public static String selectedOrderId;
+    public static List<Orders> selectedOrder;
+    public static Integer selectedOrderNum;
     private DataLogicKitchen dl_kitchen;
     private List<String> distinct;
     private List<Orders> orders;
@@ -105,6 +115,10 @@ public class KitchenscrController implements Initializable {
 
     public static HashMap<Integer, String> orderIds = new HashMap<>();
 
+    /* N Deppe Sept 2015 - Added to keep a list of complete order data by block */
+    public static HashMap<Integer, List<Orders>> orderDataList = new HashMap<>();
+    public static HashMap<Integer, Orders> orderData = new HashMap<>();
+
     public static ObservableList ordersWaiting = FXCollections.observableArrayList();
     public static ObservableList order0list = FXCollections.observableArrayList();
     public static ObservableList order1list = FXCollections.observableArrayList();
@@ -114,6 +128,12 @@ public class KitchenscrController implements Initializable {
     public static ObservableList order5list = FXCollections.observableArrayList();
     public static ObservableList order6list = FXCollections.observableArrayList();
     public static ObservableList order7list = FXCollections.observableArrayList();
+
+    /* N Deppe Sept 2015 - Keeps track of all closed orders, up to number of stack entries in configuration */
+    private FixedStack<List<Orders>> closedOrders;
+
+    /* N Deppe Sept 2015 - Added to keep track of scene for keyboard interaction */
+    private Scene thisScene;
 
     private class PrintTimeAction implements ActionListener {
 
@@ -152,41 +172,49 @@ public class KitchenscrController implements Initializable {
         }
 
         dl_kitchen = new DataLogicKitchen();
-        
+
+        // N. Deppe - Keep stack of all closed orders
+        // Get the stack size from configuration
+        int stackSize;
+        try {
+            stackSize = Integer.parseInt(AppConfig.getInstance().getProperty("recall.historycount"));
+        } catch (Exception e) {
+            stackSize = 10;
+        }
+        if (stackSize >= 1) {
+            closedOrders = new FixedStack<>(stackSize);
+        } else {
+            closedOrders = null;
+        }
+        // Recall button is initially not visible.  It is visible when an order is closed.
+        displayRecallButton();
+
         new javax.swing.Timer(1000, new PrintTimeAction()).start();
         new javax.swing.Timer(5000, new updateDisplay()).start();
 
         order0items.setOnMouseClicked((MouseEvent event) -> {
-            selectedOrder = orderIds.get(0);
-            updateButtonText(ticketIds.get(0));
+            selectOrder(0);
         });
         order1items.setOnMouseClicked((MouseEvent event) -> {
-            selectedOrder = orderIds.get(1);
-            updateButtonText(ticketIds.get(1));
+            selectOrder(1);
         });
         order2items.setOnMouseClicked((MouseEvent event) -> {
-            selectedOrder = orderIds.get(2);
-            updateButtonText(ticketIds.get(2));
+            selectOrder(2);
         });
         order3items.setOnMouseClicked((MouseEvent event) -> {
-            selectedOrder = orderIds.get(3);
-            updateButtonText(ticketIds.get(3));
+            selectOrder(3);
         });
         order4items.setOnMouseClicked((MouseEvent event) -> {
-            selectedOrder = orderIds.get(4);
-            updateButtonText(ticketIds.get(4));
+            selectOrder(4);
         });
         order5items.setOnMouseClicked((MouseEvent event) -> {
-            selectedOrder = orderIds.get(5);
-            updateButtonText(ticketIds.get(5));
+            selectOrder(5);
         });
         order6items.setOnMouseClicked((MouseEvent event) -> {
-            selectedOrder = orderIds.get(6);
-            updateButtonText(ticketIds.get(6));
+            selectOrder(6);
         });
         order7items.setOnMouseClicked((MouseEvent event) -> {
-            selectedOrder = orderIds.get(7);
-            updateButtonText(ticketIds.get(7));
+            selectOrder(7);
         });
 
         try {
@@ -205,42 +233,111 @@ public class KitchenscrController implements Initializable {
 
     public void handleExitClick() {
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Exit Kitchen");
-        alert.setX(100);
-        alert.setY(150);
-        if ("monitor".equals(KitchenScr.parameter)) {
-            alert.setHeaderText("");
-            alert.setContentText("Do You want to exit the Kitchen screen?");
-        } else {
-            alert.setHeaderText("Notice :  \nIf you close the kitchen for the day any unprocessed orders will be deleted from the database.");
-            alert.setContentText("Do You want to close the Kitchen for the Day?");
+        // Determine what to do
+        String exitAction = AppConfig.getInstance().getProperty("misc.exitaction");
+        if (exitAction==null){exitAction="0";};
+        switch (exitAction) {
+            case "0": // Exit, do not perform additional action
+                System.exit(0);
+                break;
+            case "1": // Prompt for action or default
+            case "":
+
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Exit Kitchen");
+                alert.setX(100);
+                alert.setY(150);
+                if ("monitor".equals(KitchenScr.parameter)) {
+                    alert.setHeaderText("");
+                    alert.setContentText("Do You want to exit the Kitchen screen?");
+                } else {
+                    alert.setHeaderText("Notice :  \nIf you close the kitchen for the day any unprocessed orders will be deleted from the database.");
+                    alert.setContentText("Do You want to close the Kitchen for the Day?");
+                }
+                ButtonType buttonClearExit = new ButtonType("Close Kitchen");
+                ButtonType buttonClearDisplayExit = new ButtonType("Close Display");
+                ButtonType buttonCancel = new ButtonType("Cancel");
+                ButtonType buttonExit = new ButtonType("Exit");
+                if ("monitor".equals(KitchenScr.parameter)) {
+                    alert.getButtonTypes().setAll(buttonExit, buttonCancel);
+                } else {
+                    alert.getButtonTypes().setAll(buttonExit, buttonClearExit, buttonClearDisplayExit, buttonCancel);
+                }
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == buttonClearExit) {
+                    dl_kitchen.removeAllOrders();
+                    System.exit(0);
+                } else if (result.get() == buttonClearDisplayExit) {
+                    dl_kitchen.removeAllOrdersDisplay();
+                    System.exit(0);
+                } else if (result.get() == buttonExit) {
+                    System.exit(0);
+                }
+
+                break;
+            case "2": // Automatically close orders for entire kitchen
+                dl_kitchen.removeAllOrders();
+                System.exit(0);
+                break;
+            case "3": // Automatically close ordres for this display only
+                dl_kitchen.removeAllOrdersDisplay();
+                System.exit(0);
+                break;
+
         }
 
-        ButtonType buttonClearExit = new ButtonType("Close Kitchen");
-        ButtonType buttonCancel = new ButtonType("Cancel");
-        ButtonType buttonExit = new ButtonType("Exit");
-        if ("monitor".equals(KitchenScr.parameter)) {
-            alert.getButtonTypes().setAll(buttonExit, buttonCancel);
-        } else {
-            alert.getButtonTypes().setAll(buttonExit, buttonClearExit, buttonCancel);
-        }
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == buttonClearExit) {
-            dl_kitchen.removeAllOrders();
-            System.exit(0);
-        } else if (result.get() == buttonExit) {
-            System.exit(0);
-        }
     }
 
     public void handleCompleteOrder() {
-        if (selectedOrder != null) {;
-            dl_kitchen.removeOrder(selectedOrder);
-            selectedOrder = null;
-            updateButtonText("");
+        if (!"monitor".equals(KitchenScr.parameter)) {
+            if (selectedOrderId != null) {
+                dl_kitchen.removeOrder(selectedOrderId);
+                closedOrders.push(selectedOrder);  // add to closed order history
+                orderDataList.remove(selectedOrderNum);
+                clearSelectedOrder();
+            }
+            buildOrderPanels();
+            displayRecallButton();
         }
-        buildOrderPanels();
+    }
+
+    public void clearSelectedOrder() {
+        // Clear data for the selected order and clear the button
+        selectedOrderId = null;
+        selectedOrder = null;
+        selectedOrderNum = null;
+        updateButtonText("");
+    }
+
+    /* N Deppe Sept 2015 - Recall order functionality */
+    public void handleRecallOrder() {
+        if (!"monitor".equals(KitchenScr.parameter)) {
+            List<Orders> lastOrder;
+            if (!closedOrders.isEmpty()) {
+                lastOrder = closedOrders.pop();
+                for (Orders currOrder : lastOrder) {
+                    String strTicketId = currOrder.getTicketid();
+                    if (strTicketId.length() < 9 || !strTicketId.substring(0, 9).equals("RECALLED:")) {
+                        currOrder.setTicketid("RECALLED: " + currOrder.getTicketid());
+                    }
+                    dl_kitchen.createOrder(currOrder);
+                }
+                clearSelectedOrder();
+                buildOrderPanels();
+            }
+            displayRecallButton();
+        }
+    }
+
+    /* N Deppe Sept 2015 - Display recall button only if there are orders to recall */
+    public void displayRecallButton() {
+        if ("monitor".equals(KitchenScr.parameter)) {
+            recall.setVisible(false);
+        } else if (closedOrders != null) {
+            recall.setVisible(!closedOrders.isEmpty());
+        } else {
+            recall.setVisible(false);
+        }
     }
 
     private void updateClock() {
@@ -294,7 +391,7 @@ public class KitchenscrController implements Initializable {
     }
 
     private void updateButtonText(String id) {
-        if (selectedOrder == null) {
+        if (selectedOrderId == null) {
             completed.setText("");
         } else {
             completed.setText("Order :  '" + id + "'  Complete.");
@@ -309,15 +406,18 @@ public class KitchenscrController implements Initializable {
     }
 
     private void buildOrderPanels() {
+
         resetItemDisplays();
 
         // Get list of unique orders
         distinct = dl_kitchen.readDistinctOrders();
+        KitchenscrController.orderDataList.clear();
 
         // Populate the panel up to 8 orders
         for (int j = 0; (j < 8 && j < distinct.size()); j++) {
 
             orders = dl_kitchen.selectByOrderId(distinct.get(j));
+            KitchenscrController.orderDataList.put(j, orders);
 
             for (Orders order : orders) {
                 KitchenscrController.ticketIds.put(j, order.getTicketid());
@@ -376,5 +476,158 @@ public class KitchenscrController implements Initializable {
         order6items.setItems(order6list);
         order7items.setItems(order7list);
         orderlist.setItems(ordersWaiting);
-    }         
+    }
+
+    // N Deppe - Added for keyboard interaction
+    // Sets reference to the scene object and sets keyboard event
+    public void setScene(Scene myScene) {
+
+        if (myScene != null) {
+
+            // Get the key codes
+            final String strKeyComboSelOrd1 = AppConfig.getInstance().getProperty("keymap.selord1");
+            final String strKeyComboSelOrd2 = AppConfig.getInstance().getProperty("keymap.selord2");
+            final String strKeyComboSelOrd3 = AppConfig.getInstance().getProperty("keymap.selord3");
+            final String strKeyComboSelOrd4 = AppConfig.getInstance().getProperty("keymap.selord4");
+            final String strKeyComboSelOrd5 = AppConfig.getInstance().getProperty("keymap.selord5");
+            final String strKeyComboSelOrd6 = AppConfig.getInstance().getProperty("keymap.selord6");
+            final String strKeyComboSelOrd7 = AppConfig.getInstance().getProperty("keymap.selord6");
+            final String strKeyComboSelOrd8 = AppConfig.getInstance().getProperty("keymap.selord7");
+            final String strKeyComboComplete = AppConfig.getInstance().getProperty("keymap.complete");
+            final String strKeyComboRecall = AppConfig.getInstance().getProperty("keymap.recall");
+            final String strKeyComboExit = AppConfig.getInstance().getProperty("keymap.exit");
+
+            // Set the event handler for the scene
+            myScene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+
+                private boolean keyComboSet = false;
+
+                private KeyCodeCombination keyComboSelOrd1;
+                private KeyCodeCombination keyComboSelOrd2;
+                private KeyCodeCombination keyComboSelOrd3;
+                private KeyCodeCombination keyComboSelOrd4;
+                private KeyCodeCombination keyComboSelOrd5;
+                private KeyCodeCombination keyComboSelOrd6;
+                private KeyCodeCombination keyComboSelOrd7;
+                private KeyCodeCombination keyComboSelOrd8;
+                private KeyCodeCombination keyComboComplete;
+                private KeyCodeCombination keyComboRecall;
+                private KeyCodeCombination keyComboExit;
+
+                @Override
+                public void handle(KeyEvent event) {
+
+                    if (!keyComboSet) {
+
+                        try {
+                            keyComboSelOrd1 = (KeyCodeCombination) KeyCodeCombination.valueOf(AppConfig.getInstance().getProperty("keymap.selord1"));
+                        } catch (Exception ex) {
+                            keyComboSelOrd1 = new KeyCodeCombination(KeyCode.DIGIT1);
+                        }
+                        System.out.println("Key pressed = " + keyComboSelOrd1);
+                        try {
+                            keyComboSelOrd2 = (KeyCodeCombination) KeyCodeCombination.valueOf(AppConfig.getInstance().getProperty("keymap.selord2"));
+                        } catch (Exception ex) {
+                            keyComboSelOrd2 = new KeyCodeCombination(KeyCode.DIGIT2);
+                        }
+                        try {
+                            keyComboSelOrd3 = (KeyCodeCombination) KeyCodeCombination.valueOf(AppConfig.getInstance().getProperty("keymap.selord3"));
+                        } catch (Exception ex) {
+                            keyComboSelOrd3 = new KeyCodeCombination(KeyCode.DIGIT3);
+                        }
+                        try {
+                            keyComboSelOrd4 = (KeyCodeCombination) KeyCodeCombination.valueOf(AppConfig.getInstance().getProperty("keymap.selord4"));
+                        } catch (Exception ex) {
+                            keyComboSelOrd4 = new KeyCodeCombination(KeyCode.DIGIT4);
+                        }
+                        try {
+                            keyComboSelOrd5 = (KeyCodeCombination) KeyCodeCombination.valueOf(AppConfig.getInstance().getProperty("keymap.selord5"));
+                        } catch (Exception ex) {
+                            keyComboSelOrd5 = new KeyCodeCombination(KeyCode.DIGIT5);
+                        }
+                        try {
+                            keyComboSelOrd6 = (KeyCodeCombination) KeyCodeCombination.valueOf(AppConfig.getInstance().getProperty("keymap.selord6"));
+                        } catch (Exception ex) {
+                            keyComboSelOrd6 = new KeyCodeCombination(KeyCode.DIGIT6);
+                        }
+                        try {
+                            keyComboSelOrd7 = (KeyCodeCombination) KeyCodeCombination.valueOf(AppConfig.getInstance().getProperty("keymap.selord7"));
+                        } catch (Exception ex) {
+                            keyComboSelOrd7 = new KeyCodeCombination(KeyCode.DIGIT7);
+                        }
+                        try {
+                            keyComboSelOrd8 = (KeyCodeCombination) KeyCodeCombination.valueOf(AppConfig.getInstance().getProperty("keymap.selord8"));
+                        } catch (Exception ex) {
+                            keyComboSelOrd8 = new KeyCodeCombination(KeyCode.DIGIT8);
+                        }
+                        try {
+                            keyComboComplete = (KeyCodeCombination) KeyCodeCombination.valueOf(AppConfig.getInstance().getProperty("keymap.complete"));
+                        } catch (Exception ex) {
+                            keyComboComplete = new KeyCodeCombination(KeyCode.ENTER);
+                        }
+                        try {
+                            keyComboRecall = (KeyCodeCombination) KeyCodeCombination.valueOf(AppConfig.getInstance().getProperty("keymap.recall"));
+                        } catch (Exception ex) {
+                            keyComboRecall = new KeyCodeCombination(KeyCode.R);
+                        }
+                        try {
+                            keyComboExit = (KeyCodeCombination) KeyCodeCombination.valueOf(AppConfig.getInstance().getProperty("keymap.exit"));
+                        } catch (Exception ex) {
+                            keyComboExit = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.DOWN, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.ANY);
+                        }
+                        keyComboSet = true;
+                    }
+
+                    // Does the event keycodecombo match anything?
+                    if (keyComboSelOrd1.match(event)) {
+                        selectOrder(0);
+                    } else if (keyComboSelOrd2.match(event)) {
+                        selectOrder(1);
+                    } else if (keyComboSelOrd3.match(event)) {
+                        selectOrder(2);
+                    } else if (keyComboSelOrd4.match(event)) {
+                        selectOrder(3);
+                    } else if (keyComboSelOrd5.match(event)) {
+                        selectOrder(4);
+                    } else if (keyComboSelOrd6.match(event)) {
+                        selectOrder(5);
+                    } else if (keyComboSelOrd7.match(event)) {
+                        selectOrder(6);
+                    } else if (keyComboSelOrd8.match(event)) {
+                        selectOrder(7);
+                    } else if (keyComboComplete.match(event)) {
+                        handleCompleteOrder();
+                    } else if (keyComboRecall.match(event)) {
+                        handleRecallOrder();
+                    } else if (keyComboExit.match(event)) {
+                        handleExitClick();
+                    }
+
+                }
+
+            });
+
+            // Finally, set the scene property
+            thisScene = myScene;
+
+        }
+
+    }
+
+    /* N Deppe Sept 2015 - Added for keyboard interaction functionality */
+    // Used to select an order
+    private void selectOrder(int orderNum) {
+        if (orderDataList.containsKey(orderNum)) {
+            selectedOrder = orderDataList.get(orderNum);
+            selectedOrderId = orderIds.get(orderNum);
+            selectedOrderNum = orderNum;        
+            updateButtonText(ticketIds.get(orderNum));
+        } else {
+            selectedOrder = null;
+            selectedOrderId = null;
+            selectedOrderNum = null;
+            updateButtonText("");
+        }
+    }
+
 }

@@ -1,9 +1,10 @@
 /*
- Chromis  - The future of Point Of Sale
- Copyright (c) 2015 chromis.co.uk (John Lewis)
+ Chromis POS  - The New Face of Open Source POS
+ Copyright (c) 2015 (John Lewis) Chromis.co.uk
+
  http://www.chromis.co.uk
 
- kitchen Screen v1.42
+ kitchen Screen v1.5
 
  This file is part of chromis & its associated programs
 
@@ -20,27 +21,18 @@
  You should have received a copy of the GNU General Public License
  along with chromis.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package uk.chromis.kitchenscr;
 
 import java.util.Optional;
 import javafx.application.Application;
 import static javafx.application.Application.STYLESHEET_MODENA;
 import static javafx.application.Application.setUserAgentStylesheet;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import uk.chromis.forms.AppConfig;
@@ -86,7 +78,7 @@ public class KitchenScr extends Application {
         Stage secondaryStage = new Stage();
         Parent root = FXMLLoader.load(getClass().getResource("/uk/chromis/configuration/database.fxml"));        
         secondaryStage.setTitle("Database Configuration - v" + AppLocal.APP_VERSION);
-        secondaryStage.setScene(new Scene(root, 600, 380));
+        secondaryStage.setScene(new Scene(root, 600, 500));
         setUserAgentStylesheet(STYLESHEET_MODENA);
         secondaryStage.showAndWait();
         }
@@ -129,11 +121,16 @@ public class KitchenScr extends Application {
             scrYpos = 0;
         }
 
-        Parent root = FXMLLoader.load(getClass().getResource("kitchenscr.fxml"));
+		  FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("kitchenscr.fxml"));
+        Parent root = (Parent) fxmlLoader.load();
+		  KitchenscrController myController = (KitchenscrController) fxmlLoader.getController();
+		  // Create the scene object
+		  Scene myScene = new Scene(root, width, height);
         primaryStage.setTitle("Kitchen Orders");
         primaryStage.setX(scrXpos);
         primaryStage.setY(scrYpos);
-        primaryStage.setScene(new Scene(root, width, height));
+        primaryStage.setScene(myScene);
+		  myController.setScene(myScene);
         primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.show();
 
