@@ -1,23 +1,40 @@
-2nd July 2015
-Release: v1.00
+18th October 2015
+Release: v1.50
+=====================================================================
 
-Welcome to the Chromis Kitchen Screen application.
+V1.5
 
-Chromis Kitchescr is the first of a range of new products under the Chromis banner.
-
-The Kitchen screen software reads data from the pos softwares database. This was designed
-to work in conjunction Unicenta. There is a requirement for a change in the Unicenta code 
-for the application to function.
-
-The initial screen displays 8 order panels and a list of any other orders in the system.
+This version of the Kitchen Screen requires Chromis POS v.0.52 or higher
+to run.
 
 
-This kitchen screen software can be used with any pos software that is able to produce 
-the correct table in the database and feed out the correct data.
+Includes additional features to work with a keyboard or bump bar. 
+There is a bug fix when populating the screen it Auxiliary items.
 
 
-Please follow installation instructions on how to install along side Unicenta oPos.
 
+Thanks to Nick Deppe, for his keyboard and bump bar routines.
+
+=====================================================================
+
+Welcome to the Chromis
+
+
+Chromis Kitchescr was the first of a range of new products under the 
+Chromis banner. The POS software needs to runnign on a database version
+that supports multi connection, this means that it will not work with 
+Derby embedded.
+
+The Kitchen screen reads data from the pos softwares database,  and 
+uses that data to populate the kicthen screen application. 
+
+This was designed to work in conjunction ChromisPos. However, other 
+POS applications can be made to work providing they are able to create
+and populate the required table.
+
+
+The initial screen displays 8 order panels and a list of any other 
+orders in the system.
 
 
 
