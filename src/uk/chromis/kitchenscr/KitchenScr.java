@@ -148,7 +148,7 @@ public class KitchenScr extends Application {
                 stage.setY(scrYpos);
                 stage.setScene(myScene);
                 myController.setScene(myScene);
-                //    stage.initStyle(StageStyle.UNDECORATED);
+                stage.initStyle(StageStyle.UNDECORATED);
                 stage.initModality(Modality.APPLICATION_MODAL);
                 publicStage = stage;
                 publicStage.show();
