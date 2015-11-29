@@ -7,7 +7,7 @@
 <?import javafx.collections.*?>
 <?import uk.chromis.customcontrol.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uk.chromis.configuration.DatabaseController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uk.chromis.configuration.DatabaseController">
     <children>
         <Pane prefHeight="500.0" prefWidth="600.0" stylesheets="@database.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
@@ -48,6 +48,7 @@
                               <Spinner fx:id="displayNumber" editable="true" layoutX="155.0" layoutY="212.0" prefHeight="25.0" prefWidth="61.0" />
                               <Label layoutX="12.0" layoutY="117.0" prefHeight="17.0" prefWidth="130.0" text="Hibernate Dialect" />
                               <TextField fx:id="jtxtDialect" layoutX="155.0" layoutY="113.0" prefHeight="25.0" prefWidth="330.0" />
+                              <CheckBox fx:id="jSecondscr" layoutX="155.0" layoutY="262.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="228.0" text="Use secondary screen if available" />
                            </children>
                         </AnchorPane>
                   </content>

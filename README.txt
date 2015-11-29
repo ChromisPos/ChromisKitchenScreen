@@ -1,3 +1,17 @@
+29th November 2015
+Release: v1.60
+=====================================================================
+
+V1.60
+
+New feature to allow the user to use a dual monitor computer.
+
+If the software is run on the same machine as the POS, the then kitchen
+display can be sent to the second monitor.
+
+
+
+
 18th October 2015
 Release: v1.50
 =====================================================================

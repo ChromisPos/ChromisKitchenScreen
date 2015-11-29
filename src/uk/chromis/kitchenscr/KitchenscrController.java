@@ -21,7 +21,6 @@
  You should have received a copy of the GNU General Public License
  along with chromis.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package uk.chromis.kitchenscr;
 
 import java.awt.event.ActionListener;
@@ -83,6 +82,7 @@ public class KitchenscrController implements Initializable {
     public Label order6time;
     public Label order7id;
     public Label order7time;
+    public Label odwaiting;
 
     public ListView order0items;
     public ListView order1items;
@@ -104,6 +104,8 @@ public class KitchenscrController implements Initializable {
     private DataLogicKitchen dl_kitchen;
     private List<String> distinct;
     private List<Orders> orders;
+    private double xOffset = 0;
+    private double yOffset = 0;
 
     public static HashMap<Integer, Object> idLabels = new HashMap<>();
     public static HashMap<Integer, String> ticketIds = new HashMap<>();
@@ -217,6 +219,16 @@ public class KitchenscrController implements Initializable {
             selectOrder(7);
         });
 
+        odwaiting.setOnMousePressed((MouseEvent event) -> {
+            xOffset = event.getSceneX();
+            yOffset = event.getSceneY();
+        });
+
+        odwaiting.setOnMouseDragged((MouseEvent event) -> {
+            KitchenScr.publicStage.setX(event.getScreenX() - xOffset);
+            KitchenScr.publicStage.setY(event.getScreenY() - yOffset);
+        });
+
         try {
             if (AppConfig.getInstance().getProperty("clock.time") != null) {
                 dateFormat = new SimpleDateFormat(AppConfig.getInstance().getProperty("clock.time"));
@@ -235,7 +247,9 @@ public class KitchenscrController implements Initializable {
 
         // Determine what to do
         String exitAction = AppConfig.getInstance().getProperty("misc.exitaction");
-        if (exitAction==null){exitAction="0";};
+        if (exitAction == null) {
+            exitAction = "0";
+        };
         switch (exitAction) {
             case "0": // Exit, do not perform additional action
                 System.exit(0);
@@ -620,7 +634,7 @@ public class KitchenscrController implements Initializable {
         if (orderDataList.containsKey(orderNum)) {
             selectedOrder = orderDataList.get(orderNum);
             selectedOrderId = orderIds.get(orderNum);
-            selectedOrderNum = orderNum;        
+            selectedOrderNum = orderNum;
             updateButtonText(ticketIds.get(orderNum));
         } else {
             selectedOrder = null;

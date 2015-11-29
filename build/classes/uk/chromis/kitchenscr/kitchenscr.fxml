@@ -14,7 +14,7 @@
       <URL value="@kitchenscr.css" />
     </stylesheets>
     <children>
-      <SplitPane dividerPositions="0.9308093994778068" layoutX="163.0" layoutY="269.0" orientation="VERTICAL" prefHeight="768.0" prefWidth="1024.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <SplitPane fx:id="mainsplit" dividerPositions="0.9308093994778068" layoutX="163.0" layoutY="269.0" orientation="VERTICAL" prefHeight="768.0" prefWidth="1024.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                <children>
@@ -43,7 +43,7 @@
                                                       <Font name="Tahoma Bold" size="13.0" />
                                                    </font>
                                                 </Label>
-                                                <Label fx:id="order0time" layoutX="161.0" layoutY="5.0" text="time">
+                                                <Label fx:id="order0time" layoutX="161.0" layoutY="5.0" text="time" AnchorPane.rightAnchor="10.0">
                                                    <font>
                                                       <Font name="Tahoma Bold" size="13.0" />
                                                    </font>
@@ -68,7 +68,7 @@
                                                       <Font name="Tahoma Bold" size="13.0" />
                                                    </font>
                                                 </Label>
-                                                <Label fx:id="order1time" layoutX="161.0" layoutY="5.0" text="time">
+                                                <Label fx:id="order1time" layoutX="161.0" layoutY="5.0" text="time" AnchorPane.rightAnchor="10.0">
                                                    <font>
                                                       <Font name="Tahoma Bold" size="13.0" />
                                                    </font>
@@ -90,7 +90,7 @@
                                                       <Font name="Tahoma Bold" size="13.0" />
                                                    </font>
                                                 </Label>
-                                                <Label fx:id="order2time" layoutX="161.0" layoutY="5.0" text="time">
+                                                <Label fx:id="order2time" layoutX="161.0" layoutY="5.0" text="time" AnchorPane.rightAnchor="10.0">
                                                    <font>
                                                       <Font name="Tahoma Bold" size="13.0" />
                                                    </font>
@@ -112,7 +112,7 @@
                                                       <Font name="Tahoma Bold" size="13.0" />
                                                    </font>
                                                 </Label>
-                                                <Label fx:id="order3time" layoutX="161.0" layoutY="5.0" text="time">
+                                                <Label fx:id="order3time" layoutX="161.0" layoutY="5.0" text="time" AnchorPane.rightAnchor="10.0">
                                                    <font>
                                                       <Font name="Tahoma Bold" size="13.0" />
                                                    </font>
@@ -136,7 +136,7 @@
                                                       <Font name="Tahoma Bold" size="13.0" />
                                                    </font>
                                                 </Label>
-                                                <Label fx:id="order4time" layoutX="161.0" layoutY="5.0" text="time">
+                                                <Label fx:id="order4time" layoutX="161.0" layoutY="5.0" text="time" AnchorPane.rightAnchor="10.0">
                                                    <font>
                                                       <Font name="Tahoma Bold" size="13.0" />
                                                    </font>
@@ -158,7 +158,7 @@
                                                       <Font name="Tahoma Bold" size="13.0" />
                                                    </font>
                                                 </Label>
-                                                <Label fx:id="order5time" layoutX="161.0" layoutY="5.0" text="time">
+                                                <Label fx:id="order5time" layoutX="161.0" layoutY="5.0" text="time" AnchorPane.rightAnchor="10.0">
                                                    <font>
                                                       <Font name="Tahoma Bold" size="13.0" />
                                                    </font>
@@ -180,7 +180,7 @@
                                                       <Font name="Tahoma Bold" size="13.0" />
                                                    </font>
                                                 </Label>
-                                                <Label fx:id="order6time" layoutX="161.0" layoutY="5.0" text="time">
+                                                <Label fx:id="order6time" layoutX="161.0" layoutY="5.0" text="time" AnchorPane.rightAnchor="10.0">
                                                    <font>
                                                       <Font name="Tahoma Bold" size="13.0" />
                                                    </font>
@@ -202,7 +202,7 @@
                                                       <Font name="Tahoma Bold" size="13.0" />
                                                    </font>
                                                 </Label>
-                                                <Label fx:id="order7time" layoutX="161.0" layoutY="5.0" text="time">
+                                                <Label fx:id="order7time" layoutX="161.0" layoutY="5.0" text="time" AnchorPane.rightAnchor="10.0">
                                                    <font>
                                                       <Font name="Tahoma Bold" size="13.0" />
                                                    </font>
@@ -225,7 +225,7 @@
                                 <items>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="16.0" prefWidth="142.0">
                                        <children>
-                                          <Label layoutX="8.0" layoutY="7.0" prefHeight="16.0" prefWidth="127.0" text="Orders Waiting">
+                                          <Label fx:id="odwaiting" layoutX="8.0" layoutY="7.0" prefHeight="16.0" prefWidth="127.0" text="Orders Waiting">
                                              <font>
                                                 <Font name="Tahoma Bold" size="12.0" />
                                              </font>
@@ -246,11 +246,11 @@
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                <children>
-                  <Button fx:id="completed" defaultButton="true" layoutX="227.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleCompleteOrder" prefHeight="35.0" prefWidth="600.0" textAlignment="CENTER" AnchorPane.bottomAnchor="7.0">
+                  <Button fx:id="completed" defaultButton="true" layoutX="212.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleCompleteOrder" prefHeight="35.0" prefWidth="600.0" textAlignment="CENTER" AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="212.0" AnchorPane.rightAnchor="210.0">
                      <font>
                         <Font name="Tahoma Bold" size="18.0" />
                      </font></Button>
-                  <Button fx:id="exit" layoutX="943.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleExitClick" prefHeight="29.0" prefWidth="59.0" text="Exit" AnchorPane.bottomAnchor="7.0" AnchorPane.rightAnchor="20.0">
+                  <Button fx:id="exit" layoutX="954.0" layoutY="9.0" mnemonicParsing="false" onAction="#handleExitClick" prefHeight="29.0" prefWidth="59.0" text="Exit" AnchorPane.bottomAnchor="7.0" AnchorPane.rightAnchor="9.0">
                      <font>
                         <Font name="Tahoma Bold" size="18.0" />
                      </font></Button>
@@ -258,6 +258,13 @@
                      <font>
                         <Font name="Arial Bold" size="24.0" />
                      </font></Label>
+                  <Button fx:id="recall" layoutX="846.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleRecallOrder" prefHeight="33.0" prefWidth="90.0" text="Recall" AnchorPane.bottomAnchor="7.0" AnchorPane.rightAnchor="86.0">
+							<font>
+								<Font name="Tahoma Bold" size="18.0" />
+							</font>
+						</Button>
+                  <Text layoutX="-1.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" text="V1.50" />
+							
                </children></AnchorPane>
         </items>
       </SplitPane>

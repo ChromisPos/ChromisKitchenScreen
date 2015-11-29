@@ -1,0 +1,169 @@
+JPanelSales
+
+Add the following methods
+
+
+  
+public void kitchenOrderScreen() {
+            kitchenOrderScreen(kitchenOrderId(), 1, true);
+    }
+    
+
+    public void kitchenOrderScreen(String id) {
+        kitchenOrderScreen(id, 1, true);        
+    }        
+    
+    
+    
+    
+    public void kitchenOrderScreen(Integer display) {
+        System.out.println("display = " + display);
+        kitchenOrderScreen(kitchenOrderId(), display, false);        
+    }
+
+    
+    public String kitchenOrderId(){
+                String id = "";
+        if ((m_oTicket.getCustomer() != null)) {
+            return m_oTicket.getCustomer().getName();
+        } else if (m_oTicketExt!=null){
+            return m_oTicketExt.toString();
+        } else {
+            if (m_oTicket.getPickupId() == 0) {
+                try {
+                    m_oTicket.setPickupId(dlSales.getNextPickupIndex());
+                } catch (BasicException e) {
+                    m_oTicket.setPickupId(0);
+                }
+            }            
+                 return getPickupString(m_oTicket);                            
+    }
+    } 
+    
+    
+      public void kitchenOrderScreen(String id, Integer display, boolean primary) {
+        // Create a UUID for this order for the kitchenorder table
+        String orderUUID = UUID.randomUUID().toString();
+        for (int i = 0; i < m_oTicket.getLinesCount(); i++) {           
+           if ("No".equals(m_oTicket.getLine(i).getProperty("sendstatus"))){
+               if (primary){  
+                   if ((m_oTicket.getLine(i).getProperty("display")==null) || (m_oTicket.getLine(i).getProperty("display")=="")){  
+                       display=1;
+                   }else{
+                   display = Integer.parseInt(m_oTicket.getLine(i).getProperty("display"));
+               }
+               }
+            try {
+                dlSystem.addOrder(UUID.randomUUID().toString(), orderUUID, (int) m_oTicket.getLine(i).getMultiply(), m_oTicket.getLine(i).getProductName(),
+                        m_oTicket.getLine(i).getProductAttSetInstDesc(), m_oTicket.getLine(i).getProperty("notes"), id, display);
+            } catch (BasicException ex) {
+                Logger.getLogger(JPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
+            }            
+           } 
+        }
+    }
+
+
+DalaLogicSystem
+
+
+Add the following 
+
+    private SentenceExec m_addOrder;
+
+
+
+Add this before  resetResourcesCache(); approx line 296
+
+
+
+// new kitchen Printer ****************************************************
+// ************************************************************************
+// ************************************************************************        
+        m_addOrder =  new StaticSentence(s
+                , "INSERT INTO ORDERS (ID, ORDERID, QTY, DETAILS, ATTRIBUTES, NOTES, TICKETID, DISPLAYID) " +
+                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?) "
+                , new SerializerWriteBasic(new Datas[] {
+                    Datas.STRING,
+                    Datas.STRING, 
+                    Datas.INT,
+                    Datas.STRING,
+                    Datas.STRING,
+                    Datas.STRING,
+                    Datas.STRING,
+                    Datas.INT
+                }));
+
+
+Add at the end
+
+    public final void addOrder(String id, String orderId, Integer qty, String details, String attributes, String notes,  String ticketId, Integer displayId ) throws BasicException {
+        m_addOrder.exec(id, orderId, qty, details, attributes, notes, ticketId, displayId);    
+    }
+    
+
+
+
+
+
+script.sendorder
+
+
+
+// script.SendOrder.txt
+// Sends an item in a Sale to a remote (Kitchen) Printer
+//
+//    uniCenta oPOS - Touch Friendly Point Of Sale
+//    Copyright (c) 2009-2014 uniCenta
+//    http://sourceforge.net/projects/unicentaopos
+//
+//    This file is part of uniCenta oPOS.
+//
+//    uniCenta oPOS is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    uniCenta oPOS is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with uniCenta oPOS.  If not, see <http://www.gnu.org/licenses/>.
+// **************************************************************************
+
+boolean kitchen = false;
+
+for(int i= 0; i < ticket.getLinesCount(); i++){
+	line = ticket.getLine(i);
+
+	if (line.isProductKitchen() && (line.getProperty("sendstatus") == null)){
+		line.setProperty("sendstatus", "No");
+	}
+	if((line.isProductKitchen()) && (line.getProperty("sendstatus").equals("No"))){
+		kitchen = true;
+	}
+}
+
+if (kitchen) {
+	sales.kitchenOrderScreen(); 
+	sales.printTicket("Printer.TicketKitchen");
+}
+if (kitchen){
+	javax.swing.JOptionPane.showMessageDialog(null, "Order sent to Kitchen");
+} else {
+	javax.swing.JOptionPane.showMessageDialog(null, "Nothing to Send", "Warning", JOptionPane.WARNING_MESSAGE);
+}
+
+for(int i = ticket.getLinesCount()-1; i>= 0 ; i--){
+	line = ticket.getLine(i);
+	String a = line.getProperty("sendstatus");
+
+		
+	if((line.isProductKitchen()) && (line.getProperty("sendstatus").equals("No"))){
+		line.setProperty("sendstatus", "OK");
+	}
+}
+
+

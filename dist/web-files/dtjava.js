@@ -41,7 +41,7 @@ var dtjava = function() {
         // the currently running script will also be the last element in the array
         var scripts = document.getElementsByTagName("script");
         var src = scripts[scripts.length - 1].getAttribute("src");
-        return src.substring(0, src.lastIndexOf('/') + 1);
+        return src ? src.substring(0, src.lastIndexOf('/') + 1) : "";
     })();
 
     //set to true to disable FX auto install (before release)

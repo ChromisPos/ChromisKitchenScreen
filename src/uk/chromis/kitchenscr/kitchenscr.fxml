@@ -225,7 +225,7 @@
                                 <items>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="16.0" prefWidth="142.0">
                                        <children>
-                                          <Label layoutX="8.0" layoutY="7.0" prefHeight="16.0" prefWidth="127.0" text="Orders Waiting">
+                                          <Label fx:id="odwaiting" layoutX="8.0" layoutY="7.0" prefHeight="16.0" prefWidth="127.0" text="Orders Waiting">
                                              <font>
                                                 <Font name="Tahoma Bold" size="12.0" />
                                              </font>

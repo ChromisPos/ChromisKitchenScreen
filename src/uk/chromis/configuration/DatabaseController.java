@@ -39,6 +39,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Spinner;
@@ -81,7 +82,8 @@ public class DatabaseController implements Initializable {
     public Spinner displayNumber;
     public TextField jtxtClockFormat;
     public Spinner historyCount;
-
+    public CheckBox jSecondscr;
+    
     private final DirtyManager dirty = new DirtyManager();
     private String display;
     private AltEncrypter cypher;
@@ -153,8 +155,9 @@ public class DatabaseController implements Initializable {
         jtxtMapSelOrd8.textProperty().addListener(dirty);
         jtxtMapComplete.textProperty().addListener(dirty);
         jtxtMapRecall.textProperty().addListener(dirty);
-        jtxtMapExit.textProperty().addListener(dirty);
-
+        jtxtMapExit.textProperty().addListener(dirty);        
+        jSecondscr.selectedProperty().addListener(dirty);
+        
         jcboDBDriver.setOnAction(e -> {
             if ("Apache Derby Client/Server".equals(jcboDBDriver.getValue())) {
                 displayNumber.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9, 1));
@@ -237,6 +240,7 @@ public class DatabaseController implements Initializable {
 
     public void loadProperties() {
         jcboDBDriver.setValue(AppConfig.getInstance().getProperty("db.engine"));
+        jSecondscr.setSelected(Boolean.valueOf(AppConfig.getInstance().getProperty("screen.secondscr")));
         jtxtDbDriver.setText(AppConfig.getInstance().getProperty("db.driver"));
         jtxtDbURL.setText(AppConfig.getInstance().getProperty("db.URL"));
         jtxtDialect.setText(AppConfig.getInstance().getProperty("db.dialect"));
@@ -353,6 +357,7 @@ public class DatabaseController implements Initializable {
     }
 
     public void handleSaveClick() throws IOException, LiquibaseException {
+        AppConfig.getInstance().setProperty("screen.secondscr", Boolean.toString(jSecondscr.isSelected()));
         AppConfig.getInstance().setProperty("db.engine", jcboDBDriver.getValue());
         AppConfig.getInstance().setProperty("screen.displaynumber", displayNumber.getValue().toString());
         AppConfig.getInstance().setProperty("db.driver", jtxtDbDriver.getText());
@@ -453,6 +458,5 @@ public class DatabaseController implements Initializable {
         }
         String regex = "^$|[0-9]+";
         return number.matches(regex);
-
     }
 }
