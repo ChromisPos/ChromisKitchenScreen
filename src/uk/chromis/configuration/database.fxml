@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uk.chromis.configuration.DatabaseController">
+    <children>
+        <Pane prefHeight="500.0" prefWidth="600.0" stylesheets="@database.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <Button fx:id="exit" layoutX="482.0" layoutY="440.0" mnemonicParsing="false" onAction="#handleExitClick" prefHeight="25.0" prefWidth="77.0" text="Exit" />
+                <Button fx:id="save" layoutX="376.0" layoutY="440.0" mnemonicParsing="false" onAction="#handleSaveClick" prefHeight="25.0" prefWidth="85.0" text="Save" />
+                <Button fx:id="dbtest" layoutX="338.0" layoutY="167.0" mnemonicParsing="false" stylesheets="@database.css" text=" Test" visible="false" />
+                <ImageView fx:id="chromislogo" fitHeight="57.0" fitWidth="330.0" layoutX="14.0" layoutY="421.0" pickOnBounds="true" preserveRatio="true" />
+            <Label layoutX="30.0" layoutY="470.0" prefHeight="17.0" prefWidth="211.0" text="www.chromis.co.uk" />
+            <TabPane prefHeight="423.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
+              <tabs>
+                <Tab text="Database">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="287.0" prefWidth="503.0">
+                           <children>
+                                  <Label fx:id="database" layoutX="12.0" layoutY="17.0" prefHeight="17.0" prefWidth="130.0" text="Database" />
+                                  <Label fx:id="driverclass" layoutX="12.0" layoutY="50.0" prefHeight="17.0" prefWidth="130.0" text="Driver Class" />
+                                  <Label fx:id="url" layoutX="12.0" layoutY="83.0" prefHeight="17.0" prefWidth="130.0" text="URL" />
+                                  <Label fx:id="user" layoutX="12.0" layoutY="149.0" prefHeight="17.0" prefWidth="130.0" text="User" />
+                                  <Label fx:id="password" layoutX="12.0" layoutY="182.0" prefHeight="17.0" prefWidth="130.0" text="Password" />
+                                  <ComboBox fx:id="jcboDBDriver" editable="true" layoutX="154.0" layoutY="13.0" prefHeight="25.0" prefWidth="330.0">
+                                      <items>
+                                          <FXCollections fx:factory="observableArrayList">
+                                              <String fx:value="MySQL" />                                              
+                                              <String fx:value="PostgreSQL" />
+                                          </FXCollections>            
+                                      </items>
+                                      <value>
+                                          <String fx:value="MySQL" /> 
+                                      </value>
+                                  </ComboBox>
+                                  <TextField fx:id="jtxtDbDriver" layoutX="155.0" layoutY="47.0" prefHeight="25.0" prefWidth="330.0" />
+                                  <TextField fx:id="jtxtDbURL" layoutX="155.0" layoutY="80.0" prefHeight="25.0" prefWidth="330.0" />     
+                                  <TextField fx:id="jtxtDbUser" layoutX="155.0" layoutY="145.0" />
+                              <PasswordField fx:id="jtxtDbPassword" layoutX="155.0" layoutY="178.0" />
+                              <Label layoutX="12.0" layoutY="215.0" prefHeight="17.0" prefWidth="130.0" text="Display Number" />
+                              <Spinner fx:id="displayNumber" editable="true" layoutX="155.0" layoutY="212.0" prefHeight="25.0" prefWidth="61.0" />
+                              <Label layoutX="12.0" layoutY="117.0" prefHeight="17.0" prefWidth="130.0" text="Hibernate Dialect" />
+                              <TextField fx:id="jtxtDialect" layoutX="155.0" layoutY="113.0" prefHeight="25.0" prefWidth="330.0" />
+                              <CheckBox fx:id="jSecondscr" layoutX="155.0" layoutY="262.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="228.0" text="Use secondary screen if available" />
+                           </children>
+                        </AnchorPane>
+                  </content>
+                </Tab>
+                <Tab text="Keyboard Mappings">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="282.0" prefWidth="574.0">
+                           <children>
+                              <Label layoutX="20.0" layoutY="20.0" text="Select Order Box 1" />
+                              <Label layoutX="20.0" layoutY="50.0" text="Select Order Box 2" />
+                              <Label layoutX="20.0" layoutY="80.0" text="Select Order Box 3" />
+                              <Label layoutX="20.0" layoutY="110.0" text="Select Order Box 4" />
+                              <Label layoutX="20.0" layoutY="140.0" text="Select Order Box 5" />
+                              <Label layoutX="20.0" layoutY="170.0" text="Select Order Box 6" />
+                              <Label layoutX="20.0" layoutY="200.0" text="Select Order Box 7" />
+                              <Label layoutX="20.0" layoutY="230.0" text="Select Order Box 8" />
+                              <Label layoutX="20.0" layoutY="260.0" text="Complete Selected Order" />
+                              <Label layoutX="20.0" layoutY="290.0" text="Recall Last Order" />
+                              <Label layoutX="20.0" layoutY="320.0" text="Exit Application" />
+                              <KeyComboTextField fx:id="jtxtMapSelOrd1" layoutX="200.0" layoutY="20.0" prefHeight="25.0" prefWidth="150.0" />
+                              <KeyComboTextField fx:id="jtxtMapSelOrd2" layoutX="200.0" layoutY="50.0" prefHeight="25.0" prefWidth="150.0" />
+                              <KeyComboTextField fx:id="jtxtMapSelOrd3" layoutX="200.0" layoutY="80.0" prefHeight="25.0" prefWidth="150.0" />
+                              <KeyComboTextField fx:id="jtxtMapSelOrd4" layoutX="200.0" layoutY="110.0" prefHeight="25.0" prefWidth="150.0" />
+                              <KeyComboTextField fx:id="jtxtMapSelOrd5" layoutX="200.0" layoutY="140.0" prefHeight="25.0" prefWidth="150.0" />
+                              <KeyComboTextField fx:id="jtxtMapSelOrd6" layoutX="200.0" layoutY="170.0" prefHeight="25.0" prefWidth="150.0" />
+                              <KeyComboTextField fx:id="jtxtMapSelOrd7" layoutX="200.0" layoutY="200.0" prefHeight="25.0" prefWidth="150.0" />
+                              <KeyComboTextField fx:id="jtxtMapSelOrd8" layoutX="200.0" layoutY="230.0" prefHeight="25.0" prefWidth="150.0" />
+                              <KeyComboTextField fx:id="jtxtMapComplete" layoutX="200.0" layoutY="260.0" prefHeight="25.0" prefWidth="150.0" />
+                              <KeyComboTextField fx:id="jtxtMapRecall" layoutX="200.0" layoutY="290.0" prefHeight="25.0" prefWidth="150.0" />
+                              <KeyComboTextField fx:id="jtxtMapExit" layoutX="200.0" layoutY="320.0" prefHeight="25.0" prefWidth="150.0" />
+                           </children>
+                    </AnchorPane>
+                  </content>
+                </Tab>
+                  <Tab text="Miscellaneous">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <Label layoutX="14.0" layoutY="18.0" prefHeight="17.0" prefWidth="130.0" text="Clock format" />
+                              <TextField fx:id="jtxtClockFormat" layoutX="157.0" layoutY="14.0" prefHeight="25.0" prefWidth="122.0" text="HH:mm:ss" />
+                              <Label layoutX="14.0" layoutY="55.0" text="Keep items in history" />
+                              <Spinner fx:id="historyCount" editable="true" layoutX="157.0" layoutY="52.0" prefHeight="25.0" prefWidth="61.0" />
+                              <ChoiceBox fx:id="jchcExitAction" layoutX="157.0" layoutY="90.0" prefHeight="25.0" prefWidth="401.0">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="Exit, do not perform any additional action" />
+                                        <String fx:value="Prompt for action" />
+                                        <String fx:value="Automatically close all orders for kitchen" />
+                                        <String fx:value="Automatically close all orders for this display" />
+                                    </FXCollections>            
+                                </items>
+                                <value>
+                                    <String fx:value="Prompt for action" /> 
+                                </value>
+                              </ChoiceBox>
+                              <Label layoutX="14.0" layoutY="95.0" text="Exit Action" />
+                              <Label layoutX="14.0" layoutY="135.0" prefHeight="17.0" prefWidth="85.0" text="Display size" textAlignment="RIGHT" />
+                              <TextField fx:id="jtxtWidth" layoutX="205.0" layoutY="131.0" prefHeight="25.0" prefWidth="53.0" text="1024" />
+                              <TextField fx:id="jtxtHeight" layoutX="353.0" layoutY="131.0" prefHeight="25.0" prefWidth="53.0" text="768" />
+                              <Label layoutX="156.0" layoutY="135.0" prefHeight="17.0" prefWidth="41.0" text="Width" />
+                              <Label layoutX="304.0" layoutY="135.0" text="Height" />
+                              <Label layoutX="14.0" layoutY="215.0" prefHeight="17.0" prefWidth="127.0" text="Overdue time limit" textAlignment="RIGHT" />
+                              <Label layoutX="14.0" layoutY="175.0" prefHeight="17.0" prefWidth="137.0" text="Amber time limit" textAlignment="RIGHT" />
+                              <Label layoutX="230.0" layoutY="175.0" prefHeight="17.0" prefWidth="66.0" text="minutes" />
+                              <Label layoutX="230.0" layoutY="215.0" prefHeight="17.0" prefWidth="66.0" text="minutes" />
+                              <Spinner fx:id="redMinutes" editable="true" layoutX="157.0" layoutY="211.0" prefHeight="25.0" prefWidth="61.0" />
+                              <Spinner fx:id="amberMinutes" editable="true" layoutX="157.0" layoutY="171.0" prefHeight="25.0" prefWidth="61.0" />
+                           </children>
+                        </AnchorPane>
+                    </content>
+                  </Tab>
+              </tabs>
+            </TabPane>            
+            </children>
+        </Pane>
+    </children>
+</AnchorPane>

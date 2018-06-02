@@ -1,0 +1,81 @@
+/*
+ Chromis POS  - The New Face of Open Source POS
+ Copyright (c) 2015 (John Lewis) Chromis.co.uk
+
+ http://www.chromis.co.uk
+
+ kitchen Screen v1.5
+
+ This file is part of chromis & its associated programs
+
+ chromis is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ chromis is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with chromis.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*******************************************************************************
+ *                                                                             *
+ * "Yellow on Black" contrast theme.                                           *
+ *                                                                             *
+ ******************************************************************************/
+
+.root {
+    -fx-base: black;
+    -fx-background: -fx-base;
+    -fx-control-inner-background: -fx-base;
+    -fx-control-inner-background-alt: -fx-base;
+    -fx-faint-focus-color: -fx-accent;
+    -fx-hover-base: yellow;
+    -fx-pressed-base: derive(-fx-hover-base, -18%);
+    -fx-box-border: -fx-hover-base;
+    -fx-text-box-border: -fx-hover-base;
+    -fx-shadow-highlight-color: -fx-base;
+    -fx-outer-border: -fx-hover-base;
+    -fx-light-text-color: -fx-hover-base;
+    -fx-mark-color: ladder(
+        -fx-color,
+        yellow 60%,
+        derive(-fx-color,-63%) 31%
+        );
+    -fx-selection-bar-non-focused: derive(-fx-hover-base, -80%);
+    -fx-contrast-color: yellow;
+}
+
+
+.list-cell 
+{
+    -fx-font: 10pt "Arial";
+    -fx-font-weight: bold;
+}
+
+.clock{
+    -fx-font: 16pt "Arial";
+    -fx-font-weight: bold;    
+}
+
+.status-amber{
+    -fx-background-color: #ffc100; 
+    -fx-light-text-color: black;
+}
+
+.status-green{
+    -fx-background-color: #8bff00; 
+    -fx-light-text-color: black;
+}
+
+.status-red{
+    -fx-background-color: #ff0000; 
+    -fx-light-text-color: black;
+}
+.status-black{
+    -fx-background-color: black;   
+}
